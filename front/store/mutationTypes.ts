@@ -1,0 +1,6 @@
+export const SET_ALL_PRODUCT: string = 'SET_ALL_PRODUCT'
+export const SET_PRODUCT_FORM: string = 'SET_PRODUCT_FORM'
+export const SEARCH_PRODUCT_BY_NAME: string = 'SEARCH_PRODUCT_BY_NAME'
+export const SEARCH_PRODUCT: string = 'SEARCH_PRODUCT'
+export const ADD_PRODUCT: string = 'ADD_PRODUCT'
+export const REFRESH: string = 'REFRESH'
