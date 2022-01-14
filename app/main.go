@@ -4,6 +4,7 @@ import (
 	"log"
 	"task/config"
 	"task/internal/app/rest"
+	"task/internal/modules/autorisation"
 	"task/internal/modules/product"
 
 	"github.com/gin-contrib/cors"
@@ -34,7 +35,10 @@ func main() {
 	productRepo := product.NewRepository()
 	productService := product.NewService(productRepo)
 
-	server := rest.NewRest(r, db, productService)
+	autorisationRepo := autorisation.NewRepository()
+	autorisationService := autorisation.NewService(autorisationRepo)
+
+	server := rest.NewRest(r, db, productService, autorisationService)
 
 	server.Run()
 }
