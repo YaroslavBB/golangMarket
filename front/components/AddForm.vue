@@ -1,4 +1,5 @@
 <template>
+<form @submit.prevent="addProduct()">
   <div class="modal-card">
     <header class="modal-card-head">
       <p class="modal-card-title">Добавление формы</p>
@@ -6,7 +7,8 @@
     </header>
     <div class="modal-card-body">
       <b-field class="mb-5">
-        <b-input v-model="form" placeholder="Укажите форму товара" rounded />
+        <b-input v-model="form" placeholder="Укажите форму товара" rounded required/>
+        
       </b-field>
 
       <b-field>
@@ -14,6 +16,7 @@
           v-model="amount"
           placeholder="Введите колличество товара"
           rounded
+          required
         />
       </b-field>
       <b-field>
@@ -21,6 +24,7 @@
           v-model="price"
           placeholder="Укажите цену товара"
           rounded
+          required
         />
       </b-field>
       <b-field>
@@ -29,6 +33,7 @@
           ref="datepicker"
           expanded
           placeholder="Укажите дату начала цен"
+          required
         >
         </b-datepicker>
         <b-button
@@ -43,6 +48,7 @@
           ref="datepicker2"
           expanded
           placeholder="Укажите дату конца цен"
+          required
         >
         </b-datepicker>
         <b-button
@@ -53,11 +59,12 @@
       </b-field>
     </div>
     <footer class="modal-card-foot">
-      <b-button type="is-success" outlined @click="this.addProduct">
+      <button class="button is-success is-outlined" type="submit">
         Добавить форму
-      </b-button>
+      </button>
     </footer>
   </div>
+</form>
 </template>
 
 <script lang="ts">

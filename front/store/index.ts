@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import * as actionTypes from './actionTypes'
 import * as mutationTypes from './mutationTypes'
 import moment from 'moment'
@@ -7,7 +8,15 @@ interface RootState {
     products: Product[]
     productForms: ProductForm[]
     searchProduct: Product[]
+    user: User
+    message: string
 }
+
+interface User {
+    username: string
+    password: string
+}
+
 
 interface Product {
     productId: Number
@@ -29,6 +38,8 @@ export const state = (): RootState => ({
     products: [],
     productForms: [],
     searchProduct: [],
+    user: { username: "", password: "" },
+    message: ""
 })
 
 export const mutations: MutationTree<RootState> = {
@@ -59,7 +70,17 @@ export const mutations: MutationTree<RootState> = {
     },
     [mutationTypes.REFRESH](state) {
         state.searchProduct = []
+    },
+
+    [mutationTypes.SET_USER](state, payload) {
+        state.user = payload
+        state.message = ""
+    },
+
+    [mutationTypes.SET_ERROR_MESSAGE](state, payload) {
+        state.message = payload
     }
+
 }
 
 export const actions: ActionTree<RootState, RootState> = {
@@ -80,14 +101,28 @@ export const actions: ActionTree<RootState, RootState> = {
         dispatch(actionTypes.GET_ALL_PRODUCTS)
     },
 
-    async [actionTypes.GET_PRODUCT_FORMS]({ commit }, productId) {
-        let response = await this.$axios.$get(`http://127.0.0.1:8080/product/${productId}`)
+    async [actionTypes.GET_PRODUCT_FORMS]({ commit, dispatch }, productId) {
+        let response: Product = await this.$axios.$get(`http://127.0.0.1:8080/product/${productId}`)
         commit(mutationTypes.SET_PRODUCT_FORM, response)
+
     },
 
     async [actionTypes.ADD_NEW_FORM]({ dispatch }, newProduct) {
         await this.$axios.$post('http://127.0.0.1:8080/product/add', newProduct)
 
         dispatch(actionTypes.GET_PRODUCT_FORMS, newProduct.productId)
+    },
+
+    async [actionTypes.REGISTRATION]({ commit }, user) {
+        try {
+            await this.$axios.$post('http://127.0.0.1:8080/sign-up/regisration', user)
+            commit(mutationTypes.SET_USER, user)
+        } catch (err: any) {
+            const { error } = err.response.data
+            if (error == "данный пользователь уже существует") {
+                commit(mutationTypes.SET_ERROR_MESSAGE, error)
+            }
+            return
+        }
     }
 }

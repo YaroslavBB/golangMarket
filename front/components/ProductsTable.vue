@@ -1,5 +1,10 @@
 <template>
   <section class="section">
+    <b-field position="is-right">
+      <b-button type="is-info" position="is-right" outlined @click="this.registration"
+        >Sign-up</b-button
+      >
+    </b-field>
     <SearchProduct></SearchProduct>
     <b-field>
       <b-button type="is-success" outlined @click="openAddProductModal"
@@ -41,7 +46,9 @@
           <b-button
             type="is-primary"
             outlined
-            @click="openProductFormTableModal(props.row.productId, props.row.name)"
+            @click="
+              openProductFormTableModal(props.row.productId, props.row.name)
+            "
           >
             Детали
           </b-button>
@@ -92,7 +99,6 @@ export default class ProductTable extends Vue {
     })
   }
   openAddProductModal() {
-    console.log(this.products)
     ;(this as any).$buefy.modal.open({
       parent: this,
       component: AddProduct,
@@ -101,7 +107,7 @@ export default class ProductTable extends Vue {
     })
   }
   formatDate(date: Date) {
-    moment.locale("ru")
+    moment.locale('ru')
     return moment(date).format('L')
   }
   async deleted(id: Number) {
@@ -117,6 +123,10 @@ export default class ProductTable extends Vue {
     } else {
       return this.searchProduct
     }
+  }
+
+  registration() {
+    ;(this as any).$router.push('/sign-up/registration')
   }
 
   async created() {

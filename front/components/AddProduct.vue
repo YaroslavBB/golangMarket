@@ -1,72 +1,77 @@
 <template>
-  <div class="modal-card" style="width: auto">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Добавление товара</p>
-      <button type="button" class="delete" @click="$emit('close')" />
-    </header>
-    <div class="modal-card-body">
-      <b-field>
-        <b-input
-          v-model="name"
-          placeholder="Введите наименование товара"
-          minlength="3"
-          rounded
-        />
-      </b-field>
-      <b-field>
-        <b-input v-model="form" placeholder="Укажите форму товара" rounded />
-      </b-field>
-      <b-field>
-        <b-numberinput
-          v-model="amount"
-          placeholder="Введите колличество товара"
-          rounded
-          type="number"
-        />
-      </b-field>
-      <b-field>
-        <b-numberinput
-          v-model="price"
-          placeholder="Укажите цену товара"
-          rounded
-          type="number"
-        />
-      </b-field>
-      <b-field>
-        <b-datepicker
-          v-model="dateStart"
-          ref="datepicker"
-          expanded
-          placeholder="Укажите дату начала цен"
-        >
-        </b-datepicker>
-        <b-button
-          @click="$refs.datepicker.toggle()"
-          icon-left="calendar-today"
-          type="is-primary"
-        />
-      </b-field>
-      <b-field>
-        <b-datepicker
-          v-model="dateEnd"
-          ref="datepicker2"
-          expanded
-          placeholder="Укажите дату конца цен"
-        >
-        </b-datepicker>
-        <b-button
-          @click="$refs.datepicker2.toggle()"
-          icon-left="calendar-today"
-          type="is-primary"
-        />
-      </b-field>
+  <form @submit.prevent="addProduct()">
+    <div class="modal-card" style="width: auto">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Добавление товара</p>
+        <button type="button" class="delete" @click="$emit('close')" />
+      </header>
+      <div class="modal-card-body">
+        <b-field>
+          <b-input
+            v-model="name"
+            placeholder="Введите наименование товара"
+            minlength="3"
+            rounded
+            required
+          />
+        </b-field>
+        <b-field>
+          <b-input v-model="form" placeholder="Укажите форму товара" rounded />
+        </b-field>
+        <b-field>
+          <b-numberinput
+            v-model="amount"
+            placeholder="Введите колличество товара"
+            rounded
+            type="number"
+            required
+          />
+        </b-field>
+        <b-field>
+          <b-numberinput
+            v-model="price"
+            placeholder="Укажите цену товара"
+            rounded
+            type="number"
+            required
+          />
+        </b-field>
+        <b-field>
+          <b-datepicker
+            v-model="dateStart"
+            ref="datepicker"
+            expanded
+            placeholder="Укажите дату начала цен"
+            required
+          >
+          </b-datepicker>
+          <b-button
+            @click="$refs.datepicker.toggle()"
+            icon-left="calendar-today"
+            type="is-primary"
+          />
+        </b-field>
+        <b-field>
+          <b-datepicker
+            v-model="dateEnd"
+            ref="datepicker2"
+            expanded
+            placeholder="Укажите дату конца цен"
+            required
+          >
+          </b-datepicker>
+          <b-button
+            @click="$refs.datepicker2.toggle()"
+            icon-left="calendar-today"
+            type="is-primary"
+          />
+        </b-field>
+      </div>
+      <footer class="modal-card-foot">
+        <button class="button is-success is-outlined" type="submit">Добавить</button>
+      </footer>
     </div>
-    <footer class="modal-card-foot">
-      <b-button type="is-success" outlined @click="this.addProduct">
-        Добавить
-      </b-button>
-    </footer>
-  </div>
+  </form>
 </template>
 
 <script lang="ts">
