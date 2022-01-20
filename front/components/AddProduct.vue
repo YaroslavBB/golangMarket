@@ -80,7 +80,7 @@ export default class AddProduct extends Vue {
   dateEnd = null
 
   async addProduct() {
-    let newProduct = {
+    const newProduct = {
       name: this.name,
       form: this.form,
       amount: this.amount,

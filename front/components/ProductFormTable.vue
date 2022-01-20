@@ -38,9 +38,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Action, State } from 'vuex-class'
-import moment from 'moment'
-import AddForm from './AddForm.vue'
+import moment, { locale } from 'moment'
 import * as actionTypes from '../store/actionTypes'
+import AddForm from './AddForm.vue'
 @Component({
   components: { AddForm },
 })
@@ -50,27 +50,31 @@ export default class ProductFormTable extends Vue {
 
   @Prop()
   name: string
+
   @Prop()
   productId: number
 
   formatDate(date: Date) {
-    moment.locale('ru')
+    locale('ru')
     return moment(date).format('L')
   }
-  async openAddFormModal() {
+
+  openAddFormModal() {
     ;(this as any).$buefy.modal.open({
       parent: this,
       component: AddForm,
       hasModalCard: true,
       trapFocus: true,
+      customClass: "custom-class",
       props: {
         name: this.name,
         productId: this.productId,
       },
     })
   }
+
   async created() {
-    this.GET_PRODUCT_FORMS(this.productId)
+    await this.GET_PRODUCT_FORMS(this.productId)
   }
 }
 </script>

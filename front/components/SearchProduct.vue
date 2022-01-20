@@ -44,10 +44,10 @@
 </template>
 
 <script lang="ts">
-import * as mutationType from '../store/mutationTypes'
 import { State, Mutation } from 'vuex-class'
 import { Component, Vue } from 'nuxt-property-decorator'
-import moment from 'moment'
+import moment, { locale } from 'moment'
+import * as mutationType from '../store/mutationTypes'
 @Component
 export default class SearchProduct extends Vue {
   @State('searchProduct') searchProduct
@@ -64,9 +64,10 @@ export default class SearchProduct extends Vue {
     ),
     searchName: '',
   }
+
   search() {
     this.SEARCH_PRODUCT(this.searchQuery)
-    if (this.searchProduct.length == 0) {
+    if (this.searchProduct.length === 0) {
       ;(this as any).$buefy.toast.open({
         message: 'Ничего не найдено!',
       })
@@ -77,10 +78,12 @@ export default class SearchProduct extends Vue {
       })
     }
   }
+
   formatDate(date: Date) {
-    moment.locale('ru')
+    locale('ru')
     return moment(date).format('L')
   }
+
   refresh() {
     this.REFRESH()
   }

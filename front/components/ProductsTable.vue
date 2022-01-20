@@ -43,13 +43,13 @@ section.section
         )
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 import { Action, State } from 'vuex-class'
-import moment from 'moment'
+import moment, { locale } from 'moment'
+import * as actionTypes from '../store/actionTypes'
 import ProductsFormTable from './ProductFormTable.vue'
 import AddProduct from './AddProduct.vue'
 import SearchProduct from './SearchProduct.vue'
-import * as actionTypes from '../store/actionTypes'
 @Component({
   components: { ProductsFormTable, AddProduct, SearchProduct },
 })
@@ -69,34 +69,36 @@ export default class ProductTable extends Vue {
       component: ProductsFormTable,
       trapFocus: true,
       props: {
-        productId: productId,
-        name: name,
+        productId,
+        name,
       },
     })
   }
+
   openAddProductModal() {
     ;(this as any).$buefy.modal.open({
       parent: this,
       component: AddProduct,
-      trapFocus: true,
       canCancel: false,
-      hasModalCard: false,
       fullScreen: true,
     })
   }
+
   formatDate(date: Date) {
-    moment.locale('ru')
+    locale('ru')
     return moment(date).format('L')
   }
+
   async deleted(id: Number) {
-    this.DELETE_BY_ID(id)
+    await this.DELETE_BY_ID(id)
     ;(this as any).$buefy.toast.open({
       message: 'Успешно удалено!',
       type: 'is-danger',
     })
   }
+
   allProducts() {
-    if (this.searchProduct.length == 0) {
+    if (this.searchProduct.length === 0) {
       return this.products
     } else {
       return this.searchProduct

@@ -57,10 +57,11 @@ export default class RegistrationForm extends Vue {
     username: null,
     password: null,
   }
+
   repeatPassword: string = null
 
   comparePassword() {
-    if (this.user.password == this.repeatPassword) {
+    if (this.user.password === this.repeatPassword) {
       return true
     }
     return false

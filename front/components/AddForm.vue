@@ -68,6 +68,7 @@ export default class AddForm extends Vue {
 
   @Prop()
   name: string
+
   @Prop()
   productId: number
 
@@ -78,7 +79,7 @@ export default class AddForm extends Vue {
   dateEnd = null
 
   async addProduct() {
-    let newProduct = {
+    const newProduct = {
       productId: this.productId,
       name: this.name,
       form: this.form,

@@ -3,10 +3,10 @@
     ProductsTable
 </template>
 <script type="ts">
-import ProductsTable from '../components/ProductsTable.vue'
 import { Component, Vue } from 'nuxt-property-decorator'
+import ProductsTable from '../components/ProductsTable.vue'
 @Component({
   components: { ProductsTable },
 })
-export default class Index {}
+export default class Index extends Vue {}
 </script>

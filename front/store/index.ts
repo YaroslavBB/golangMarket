@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable array-callback-return */
+/* eslint-disable no-use-before-define */
 
+import moment, { locale } from 'moment'
+import { MutationTree, ActionTree } from 'vuex/types/index'
 import * as actionTypes from './actionTypes'
 import * as mutationTypes from './mutationTypes'
-import moment from 'moment'
-import { MutationTree, ActionTree } from 'vuex/types/index'
 
 interface RootState {
     products: Product[]
@@ -61,13 +64,13 @@ export const mutations: MutationTree<RootState> = {
     },
 
     [mutationTypes.SEARCH_PRODUCT](state, searchQuery: SearchQuery) {
-        moment.locale("en")
-        let startDate = moment(searchQuery.searchStartDate).format("l")
-        let endDate = moment(searchQuery.searchEndDate).format("l")
+        locale("en")
+        const startDate = moment(searchQuery.searchStartDate).format("l")
+        const endDate = moment(searchQuery.searchEndDate).format("l")
 
+       
         state.searchProduct = state.products.filter((product) => {
-            let productDate = moment(product.dateAdded).format("l")
-
+            const productDate = moment(product.dateAdded).format("l")
             if (moment(productDate).isAfter(startDate) && moment(productDate).isBefore(endDate)) {
                 return product.name.toLowerCase().includes(searchQuery.searchName.toLowerCase())
             }
@@ -80,59 +83,36 @@ export const mutations: MutationTree<RootState> = {
 
 export const actions: ActionTree<RootState, RootState> = {
     async [actionTypes.GET_ALL_PRODUCTS]({ commit }) {
-        try {
-            let response = await this.$axios.$get('api/products')
-            commit(mutationTypes.SET_ALL_PRODUCT, response)
-        } catch (err) {
-            throw err
-        }
+        const response = await this.$axios.$get('api/products')
+        commit(mutationTypes.SET_ALL_PRODUCT, response)
     },
 
     async [actionTypes.DELETE_BY_ID]({ dispatch }, id: Number) {
         await this.$axios.$delete(`api/delete/${id}`)
-
         dispatch(actionTypes.GET_ALL_PRODUCTS)
     },
 
     async [actionTypes.ADD_NEW_PRODUCT]({ dispatch }, newProduct: ProductAddProductPayload) {
-        try {
-            await this.$axios.$post('api/product/add', newProduct)
-    
-            dispatch(actionTypes.GET_ALL_PRODUCTS)
-        } catch (err) {
-            throw err
-        }
+        await this.$axios.$post('api/product/add', newProduct)
+        dispatch(actionTypes.GET_ALL_PRODUCTS)
     },
 
-    async [actionTypes.GET_PRODUCT_FORMS]({ commit, dispatch }, productId: Number) {
-        let response: Product = await this.$axios.$get(`api/product/${productId}`)
+    async [actionTypes.GET_PRODUCT_FORMS]({ commit }, productId: Number) {
+        const response: Product = await this.$axios.$get(`api/product/${productId}`)
         commit(mutationTypes.SET_PRODUCT_FORM, response)
 
     },
 
     async [actionTypes.ADD_NEW_FORM]({ dispatch }, newProduct: ProductAddProductPayload) {
-        try {
-            await this.$axios.$post('api/product/add', newProduct)
-    
-            dispatch(actionTypes.GET_PRODUCT_FORMS, newProduct.productId)
-        } catch (err) {
-            throw err
-        }
+        await this.$axios.$post('api/product/add', newProduct)
+        dispatch(actionTypes.GET_PRODUCT_FORMS, newProduct.productId)
     },
 
     async [actionTypes.REGISTRATION]({ commit }, user: AutorisationUserPayload) {
-        try {
-            await this.$axios.$post('api/sign-up/regisration', user)
-        } catch (err: any) {
-            throw err
-        }
+        await this.$axios.$post('api/sign-up/regisration', user)
     },
 
     async [actionTypes.LOGIN]({ commit }, user: AutorisationUserPayload) {
-        try {
-            await this.$axios.$post('api/sign-in/login', user)
-        } catch (err: any) {
-            throw err
-        }
+        await this.$axios.$post('api/sign-in/login', user)
     }
 }
