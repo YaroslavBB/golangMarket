@@ -1,70 +1,77 @@
 <template>
-<form @submit.prevent="addProduct()">
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Добавление формы</p>
-      <button type="button" class="delete" @click="$emit('close')" />
-    </header>
-    <div class="modal-card-body">
-      <b-field class="mb-5">
-        <b-input v-model="form" placeholder="Укажите форму товара" rounded required/>
-        
-      </b-field>
+  <form @submit.prevent="addProduct()">
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Добавление формы</p>
+        <button type="button" class="delete" @click="$emit('close')" />
+      </header>
+      <div class="modal-card-body">
+        <b-field class="mb-5">
+          <b-input
+            v-model="form"
+            placeholder="Укажите форму товара"
+            rounded
+            required
+          />
+        </b-field>
 
-      <b-field>
-        <b-numberinput
-          v-model="amount"
-          placeholder="Введите колличество товара"
-          rounded
-          required
-        />
-      </b-field>
-      <b-field>
-        <b-numberinput
-          v-model="price"
-          placeholder="Укажите цену товара"
-          rounded
-          required
-        />
-      </b-field>
-      <b-field>
-        <b-datepicker
-          v-model="dateStart"
-          ref="datepicker"
-          expanded
-          placeholder="Укажите дату начала цен"
-          required
-        >
-        </b-datepicker>
-        <b-button
-          @click="$refs.datepicker.toggle()"
-          icon-left="calendar-today"
-          type="is-primary"
-        />
-      </b-field>
-      <b-field>
-        <b-datepicker
-          v-model="dateEnd"
-          ref="datepicker2"
-          expanded
-          placeholder="Укажите дату конца цен"
-          required
-        >
-        </b-datepicker>
-        <b-button
-          @click="$refs.datepicker2.toggle()"
-          icon-left="calendar-today"
-          type="is-primary"
-        />
-      </b-field>
+        <b-field>
+          <b-numberinput
+            v-model="amount"
+            placeholder="Введите колличество товара"
+            rounded
+            required
+            
+          />
+        </b-field>
+        <b-field>
+          <b-numberinput
+            v-model="price"
+            placeholder="Укажите цену товара"
+            rounded
+            required
+          />
+        </b-field>
+        <b-field>
+          <b-datepicker
+            v-model="dateStart"
+            ref="datepicker"
+            expanded
+            placeholder="Укажите дату начала цен"
+            required
+            locale="ru-RU"
+          >
+          </b-datepicker>
+          <b-button
+            @click="$refs.datepicker.toggle()"
+            icon-left="calendar-today"
+            type="is-primary"
+          />
+        </b-field>
+        <b-field>
+          <b-datepicker
+            v-model="dateEnd"
+            ref="datepicker2"
+            expanded
+            placeholder="Укажите дату конца цен"
+            required
+            locale="ru-RU"
+          >
+          </b-datepicker>
+          <b-button
+            @click="$refs.datepicker2.toggle()"
+            icon-left="calendar-today"
+            type="is-primary"
+          />
+        </b-field>
+      </div>
+      <footer class="modal-card-foot">
+        <button class="button is-success is-outlined" type="submit">
+          Добавить форму
+        </button>
+      </footer>
     </div>
-    <footer class="modal-card-foot">
-      <button class="button is-success is-outlined" type="submit">
-        Добавить форму
-      </button>
-    </footer>
-  </div>
-</form>
+  </form>
 </template>
 
 <script lang="ts">
@@ -97,12 +104,19 @@ export default class AddForm extends Vue {
       dateEnd: new Date(Date.parse(this.dateEnd)),
     }
 
-    this.ADD_NEW_FORM(newProduct)
-    ;(this as any).$emit('close')
-    ;(this as any).$buefy.toast.open({
-      message: 'Успешно добавлено!',
-      type: 'is-success',
-    })
+    try {
+      await this.ADD_NEW_FORM(newProduct)
+      ;(this as any).$emit('close')
+      ;(this as any).$buefy.toast.open({
+        message: 'Успешно добавлено!',
+        type: 'is-success',
+      })
+    } catch (err) {
+      ;(this as any).$buefy.toast.open({
+        message: err.response.data.error,
+        type: 'is-danger',
+      })
+    }
   }
 }
 </script>

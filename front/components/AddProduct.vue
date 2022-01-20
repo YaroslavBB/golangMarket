@@ -34,6 +34,7 @@
             rounded
             type="number"
             required
+            
           />
         </b-field>
         <b-field>
@@ -43,6 +44,7 @@
             expanded
             placeholder="Укажите дату начала цен"
             required
+            locale="ru-RU"
           >
           </b-datepicker>
           <b-button
@@ -58,6 +60,7 @@
             expanded
             placeholder="Укажите дату конца цен"
             required
+            locale="ru-RU"
           >
           </b-datepicker>
           <b-button
@@ -90,7 +93,7 @@ export default class AddProduct extends Vue {
   dateStart = null
   dateEnd = null
 
-  addProduct() {
+  async addProduct() {
     let newProduct = {
       name: this.name,
       form: this.form,
@@ -99,12 +102,19 @@ export default class AddProduct extends Vue {
       dateStart: new Date(Date.parse(this.dateStart)),
       dateEnd: new Date(Date.parse(this.dateEnd)),
     }
-    this.ADD_NEW_PRODUCT(newProduct)
-    ;(this as any).$emit('close')
-    ;(this as any).$buefy.toast.open({
-      message: 'Успешно добавлено!',
-      type: 'is-success',
-    })
+    try {
+      await this.ADD_NEW_PRODUCT(newProduct)
+     ;(this as any).$emit('close')
+     ;(this as any).$buefy.toast.open({
+       message: 'Успешно добавлено!',
+       type: 'is-success',
+     })
+    } catch (err) {
+      ;(this as any).$buefy.toast.open({
+        message: err.response.data.error,
+        type: 'is-danger',
+      })
+    }
   }
 }
 </script>

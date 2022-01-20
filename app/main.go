@@ -7,7 +7,6 @@ import (
 	"task/internal/modules/autorisation"
 	"task/internal/modules/product"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -29,8 +28,6 @@ func main() {
 	}
 
 	r := gin.Default()
-
-	r.Use(cors.Default())
 
 	productRepo := product.NewRepository()
 	productService := product.NewService(productRepo)

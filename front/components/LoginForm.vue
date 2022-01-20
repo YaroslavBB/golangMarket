@@ -2,7 +2,7 @@
   <section class="section">
     <div class="columns is-centered">
       <div class="column is-6">
-        <form @submit.prevent="register()">
+        <form @submit.prevent="login()">
           <b-field label="Имя пользователя">
             <b-input
               v-model="user.username"
@@ -11,6 +11,8 @@
               icon="account"
               minlength="3"
               maxlength="15"
+              validation-message="Минимальное количество символов 3. Имя не может содержать пробелов"
+              pattern="[^' ']+"
             ></b-input>
           </b-field>
 
@@ -24,40 +26,20 @@
               maxlength="15"
               type="password"
               icon="lock-outline"
-              validation-message="Минимальное количество символов 3. Пароль не должен содержать пробелов"
-              pattern="[^' ']+"
             ></b-input>
           </b-field>
-
-          <b-field label="Введите пароль еще раз">
-            <b-input
-              v-model="repeatPassword"
-              placeholder="Введите пароль еще раз"
-              password-reveal
-              required
-              type="password"
-              icon="lock-outline"
-            ></b-input>
-          </b-field>
-          <b-field>
-            <div v-if="this.comparePassword()"></div>
-            <div class="is-size-7 has-text-danger" v-else>
-              Пароли не совпадают!
-            </div>
-          </b-field>
-
-           <div class="columns">
-            <b-field class="column is-3">
+          <div class="columns">
+            <b-field class="column is-1">
               <button
                 class="button is-primary is-outlined is-centered"
                 type="submit"
               >
-                Зарегистрироваться
+                Войти
               </button>
             </b-field>
             <b-field class="column is-1">
-              <b-button type="is-ghost is-centered" @click="login"
-                >Логин</b-button
+              <b-button type="is-ghost is-centered" @click="registration"
+                >Регистрация</b-button
               >
             </b-field>
           </div>
@@ -72,31 +54,22 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import { Action } from 'vuex-class'
 import * as actionTypes from '../store/actionTypes'
 @Component
-export default class RegistrationForm extends Vue {
-  @Action(actionTypes.REGISTRATION) REGISTRATION
+export default class LoginForm extends Vue {
+  @Action(actionTypes.LOGIN) LOGIN
   user = {
     username: null,
     password: null,
   }
-  repeatPassword: string = null
 
-  comparePassword() {
-    if (this.user.password == this.repeatPassword) {
-      return true
-    }
-    return false
+  registration() {
+    ;(this as any).$router.push('/sign-up/registration')
   }
 
-   login() {
-    ;(this as any).$router.push('/sign-in/login')
-  }
-
-
-  async register() {
+  async login() {
     try {
-      await this.REGISTRATION(this.user)
+      await this.LOGIN(this.user)
       ;(this as any).$buefy.toast.open({
-        message: 'Регистрация прошла успешно',
+        message: 'Добро пожаловать!',
         type: 'is-primary',
       })
       ;(this as any).$router.push('/')

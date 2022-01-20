@@ -1,10 +1,5 @@
 <template>
   <section class="section">
-    <b-field position="is-right">
-      <b-button type="is-info" position="is-right" outlined @click="this.registration"
-        >Sign-up</b-button
-      >
-    </b-field>
     <SearchProduct></SearchProduct>
     <b-field>
       <b-button type="is-success" outlined @click="openAddProductModal"
@@ -103,7 +98,9 @@ export default class ProductTable extends Vue {
       parent: this,
       component: AddProduct,
       trapFocus: true,
-      fullScreen: false,
+      canCancel: false,
+      hasModalCard: false,
+      fullScreen: true,
     })
   }
   formatDate(date: Date) {
@@ -125,12 +122,12 @@ export default class ProductTable extends Vue {
     }
   }
 
-  registration() {
-    ;(this as any).$router.push('/sign-up/registration')
-  }
-
   async created() {
-    await this.GET_ALL_PRODUCTS()
+    try {
+      await this.GET_ALL_PRODUCTS()
+    } catch (error) {
+      ;(this as any).$router.push('/sign-in/login')
+    }
   }
 }
 </script>

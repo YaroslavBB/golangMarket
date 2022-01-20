@@ -1,15 +1,18 @@
 package rest
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"task/internal/entity/autorisatione"
 	"task/internal/entity/global"
 	"task/internal/entity/producte"
 	"task/internal/modules/autorisation"
 	"task/internal/modules/product"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
@@ -29,17 +32,35 @@ func NewRest(server *gin.Engine, db *sqlx.DB, product product.Service, autorisat
 		autorisation: autorisation,
 	}
 
-	server.GET("/products", rest.LoadAllProduct)
-	server.GET("/product/:id", rest.LoadProductByID)
-	server.POST("/product/add", rest.AddNewProduct)
-	server.DELETE("/delete/:id", rest.DeleteProductById)
-	server.POST("/sign-up/regisration", rest.Register)
+	group := server.Group("/api")
+	group.GET("/products", rest.Auth, rest.LoadAllProduct)
+	group.GET("/product/:id", rest.Auth, rest.LoadProductByID)
+	group.POST("/product/add", rest.Auth, rest.AddNewProduct)
+	group.DELETE("/delete/:id", rest.Auth, rest.DeleteProductById)
+	group.POST("/sign-up/regisration", rest.Register)
+	group.POST("/sign-in/login", rest.Login)
 
 	return rest
 }
 
 func (r *Rest) Run() {
 	r.server.Run(":8080")
+}
+
+func (r *Rest) Auth(c *gin.Context) {
+	token, exist := getTokenByCookie(c)
+	if !exist {
+		errorMessage(c, fmt.Errorf("авторизация провалилась"))
+		c.Abort()
+		return
+	}
+
+	err := compareToken(token)
+	if err != nil {
+		errorMessage(c, fmt.Errorf("авторизация провалилась"))
+		c.Abort()
+		return
+	}
 }
 
 func (r *Rest) Register(c *gin.Context) {
@@ -53,12 +74,10 @@ func (r *Rest) Register(c *gin.Context) {
 	var userFromLoginForm autorisatione.User
 
 	err = c.BindJSON(&userFromLoginForm)
-	fmt.Println(userFromLoginForm)
 	if err != nil {
 		errorMessage(c, err)
 		return
 	}
-
 	_, err = r.autorisation.LoadUserByUsername(tx, userFromLoginForm.Username)
 
 	switch err {
@@ -72,13 +91,63 @@ func (r *Rest) Register(c *gin.Context) {
 			errorMessage(c, err)
 			return
 		}
+
+		token, err := createToken(userFromLoginForm.Username)
+		if err != nil {
+			errorMessage(c, err)
+			return
+		}
+
+		SetTokenInCookie(c, token)
+
 		c.JSON(http.StatusOK, gin.H{"response": "registration completed successfully"})
-		return
 
 	default:
 		errorMessage(c, err)
 		return
 	}
+}
+
+func (r *Rest) Login(c *gin.Context) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		errorMessage(c, err)
+		return
+	}
+	defer tx.Rollback()
+
+	var UserFromDB *autorisatione.User
+	var userFromLoginForm autorisatione.User
+
+	err = c.BindJSON(&userFromLoginForm)
+	if err != nil {
+		errorMessage(c, err)
+		return
+	}
+
+	UserFromDB, err = r.autorisation.LoadUserByUsername(tx, userFromLoginForm.Username)
+
+	if err != nil {
+		if err == global.ErrNoDataFound {
+			errorMessage(c, fmt.Errorf("неверный логин или пароль"))
+			return
+		}
+		errorMessage(c, err)
+		return
+	}
+
+	if UserFromDB.Password == userFromLoginForm.Password {
+		token, err := createToken(userFromLoginForm.Username)
+		if err != nil {
+			errorMessage(c, err)
+			return
+		}
+
+		c.SetCookie(global.TOKEN, token, 60*60*24, "/", "", false, false)
+		c.JSON(http.StatusOK, gin.H{"response": "login completed successfully"})
+		return
+	}
+	errorMessage(c, fmt.Errorf("неверный логин или пароль"))
 }
 
 func (r *Rest) LoadAllProduct(c *gin.Context) {
@@ -99,9 +168,7 @@ func (r *Rest) LoadAllProduct(c *gin.Context) {
 		errorMessage(c, err)
 		return
 	}
-
 	c.JSON(http.StatusOK, productList)
-
 }
 
 func (r *Rest) LoadProductByID(c *gin.Context) {
@@ -148,6 +215,11 @@ func (r *Rest) AddNewProduct(c *gin.Context) {
 		return
 	}
 
+	if strings.Trim(product.Name, " ") == "" || strings.Trim(product.Form, " ") == "" {
+		errorMessage(c, fmt.Errorf("поля не могут быть пустыми"))
+		return
+	}
+
 	err = r.product.AddNewProduct(tx, product)
 
 	if err != nil {
@@ -187,4 +259,46 @@ func (r *Rest) DeleteProductById(c *gin.Context) {
 
 func errorMessage(c *gin.Context, err error) {
 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+}
+
+func createToken(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"username": username})
+
+	return token.SignedString(global.JwtKey)
+}
+
+func SetTokenInCookie(c *gin.Context, token string) {
+	c.SetCookie(global.TOKEN, token, 60*60*24*365, "/", "", false, true)
+}
+
+func getTokenByCookie(c *gin.Context) (token string, exists bool) {
+	cookie, err := c.Request.Cookie(global.TOKEN)
+	if err != nil {
+		return
+	}
+	token = cookie.Value
+	exists = token != ""
+	return
+}
+
+func compareToken(token string) error {
+	claims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return global.JwtKey, nil
+	})
+	if err != nil {
+		return err
+	}
+
+	comparedTokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	comparedToken, err := comparedTokenClaims.SignedString(global.JwtKey)
+	if err != nil {
+		return err
+	}
+
+	if comparedToken != token {
+		return errors.New("токены не равны")
+	}
+	return nil
 }

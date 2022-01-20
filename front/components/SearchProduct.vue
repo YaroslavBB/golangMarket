@@ -13,6 +13,7 @@
     <b-field class="column is-3">
       <b-datepicker
         v-model="searchQuery.searchStartDate"
+        locale="ru-RU"
         ref="datepicker1"
         expanded
         placeholder="С '28.12.2021'..."
@@ -28,6 +29,7 @@
     <b-field class="column is-3">
       <b-datepicker
         v-model="searchQuery.searchEndDate"
+        locale="ru-RU"
         ref="datepicker"
         expanded
         placeholder="По '5.01.2022'..."
@@ -61,6 +63,7 @@
 import * as mutationType from '../store/mutationTypes'
 import { State, Mutation } from 'vuex-class'
 import { Component, Vue } from 'nuxt-property-decorator'
+import moment from 'moment'
 @Component
 export default class SearchProduct extends Vue {
   @State('searchProduct') searchProduct
@@ -89,6 +92,10 @@ export default class SearchProduct extends Vue {
         type: 'is-success',
       })
     }
+  }
+  formatDate(date: Date) {
+    moment.locale('ru')
+    return moment(date).format('L')
   }
   refresh() {
     this.REFRESH()

@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+
 import * as actionTypes from './actionTypes'
 import * as mutationTypes from './mutationTypes'
 import moment from 'moment'
@@ -8,15 +8,12 @@ interface RootState {
     products: Product[]
     productForms: ProductForm[]
     searchProduct: Product[]
-    user: User
-    message: string
 }
 
-interface User {
+interface AutorisationUserPayload {
     username: string
     password: string
 }
-
 
 interface Product {
     productId: Number
@@ -32,30 +29,38 @@ interface ProductForm {
     dateEnd: Date
 }
 
+interface ProductAddProductPayload {
+    productId: Number
+    name: string
+    form: string
+    amount: Number
+    price: Number
+    dateStart: Date
+    dateEnd: Date
+}
 
+interface SearchQuery {
+    searchStartDate: Date
+    searchEndDate: Date
+    searchName: string
+}
 
 export const state = (): RootState => ({
     products: [],
     productForms: [],
     searchProduct: [],
-    user: { username: "", password: "" },
-    message: ""
 })
 
 export const mutations: MutationTree<RootState> = {
-    [mutationTypes.SET_ALL_PRODUCT](state, payload) {
+    [mutationTypes.SET_ALL_PRODUCT](state, payload: Product[]) {
         state.products = payload
     },
 
-    [mutationTypes.SET_PRODUCT_FORM](state, payload) {
+    [mutationTypes.SET_PRODUCT_FORM](state, payload: ProductForm[]) {
         state.productForms = payload
     },
 
-    [mutationTypes.ADD_PRODUCT](state, payload) {
-        state.products.push(payload)
-    },
-
-    [mutationTypes.SEARCH_PRODUCT](state, searchQuery) {
+    [mutationTypes.SEARCH_PRODUCT](state, searchQuery: SearchQuery) {
         moment.locale("en")
         let startDate = moment(searchQuery.searchStartDate).format("l")
         let endDate = moment(searchQuery.searchEndDate).format("l")
@@ -71,58 +76,63 @@ export const mutations: MutationTree<RootState> = {
     [mutationTypes.REFRESH](state) {
         state.searchProduct = []
     },
-
-    [mutationTypes.SET_USER](state, payload) {
-        state.user = payload
-        state.message = ""
-    },
-
-    [mutationTypes.SET_ERROR_MESSAGE](state, payload) {
-        state.message = payload
-    }
-
 }
 
 export const actions: ActionTree<RootState, RootState> = {
     async [actionTypes.GET_ALL_PRODUCTS]({ commit }) {
-        let response = await this.$axios.$get('http://127.0.0.1:8080/products')
-        commit(mutationTypes.SET_ALL_PRODUCT, response)
+        try {
+            let response = await this.$axios.$get('api/products')
+            commit(mutationTypes.SET_ALL_PRODUCT, response)
+        } catch (err) {
+            throw err
+        }
     },
 
-    async [actionTypes.DELETE_BY_ID]({ dispatch }, id) {
-        await this.$axios.$delete(`http://127.0.0.1:8080/delete/${id}`)
+    async [actionTypes.DELETE_BY_ID]({ dispatch }, id: Number) {
+        await this.$axios.$delete(`api/delete/${id}`)
 
         dispatch(actionTypes.GET_ALL_PRODUCTS)
     },
 
-    async [actionTypes.ADD_NEW_PRODUCT]({ dispatch }, newProduct) {
-        await this.$axios.$post('http://127.0.0.1:8080/product/add', newProduct)
-
-        dispatch(actionTypes.GET_ALL_PRODUCTS)
+    async [actionTypes.ADD_NEW_PRODUCT]({ dispatch }, newProduct: ProductAddProductPayload) {
+        try {
+            await this.$axios.$post('api/product/add', newProduct)
+    
+            dispatch(actionTypes.GET_ALL_PRODUCTS)
+        } catch (err) {
+            throw err
+        }
     },
 
-    async [actionTypes.GET_PRODUCT_FORMS]({ commit, dispatch }, productId) {
-        let response: Product = await this.$axios.$get(`http://127.0.0.1:8080/product/${productId}`)
+    async [actionTypes.GET_PRODUCT_FORMS]({ commit, dispatch }, productId: Number) {
+        let response: Product = await this.$axios.$get(`api/product/${productId}`)
         commit(mutationTypes.SET_PRODUCT_FORM, response)
 
     },
 
-    async [actionTypes.ADD_NEW_FORM]({ dispatch }, newProduct) {
-        await this.$axios.$post('http://127.0.0.1:8080/product/add', newProduct)
-
-        dispatch(actionTypes.GET_PRODUCT_FORMS, newProduct.productId)
+    async [actionTypes.ADD_NEW_FORM]({ dispatch }, newProduct: ProductAddProductPayload) {
+        try {
+            await this.$axios.$post('api/product/add', newProduct)
+    
+            dispatch(actionTypes.GET_PRODUCT_FORMS, newProduct.productId)
+        } catch (err) {
+            throw err
+        }
     },
 
-    async [actionTypes.REGISTRATION]({ commit }, user) {
+    async [actionTypes.REGISTRATION]({ commit }, user: AutorisationUserPayload) {
         try {
-            await this.$axios.$post('http://127.0.0.1:8080/sign-up/regisration', user)
-            commit(mutationTypes.SET_USER, user)
+            await this.$axios.$post('api/sign-up/regisration', user)
         } catch (err: any) {
-            const { error } = err.response.data
-            if (error == "данный пользователь уже существует") {
-                commit(mutationTypes.SET_ERROR_MESSAGE, error)
-            }
-            return
+            throw err
+        }
+    },
+
+    async [actionTypes.LOGIN]({ commit }, user: AutorisationUserPayload) {
+        try {
+            await this.$axios.$post('api/sign-in/login', user)
+        } catch (err: any) {
+            throw err
         }
     }
 }
