@@ -1,9 +1,9 @@
-package autorisation_test
+package autorization_test
 
 import (
 	"task/config"
-	"task/internal/entity/autorisatione"
-	"task/internal/modules/autorisation"
+	"task/internal/entity/autorizatione"
+	"task/internal/modules/autorization"
 	"testing"
 
 	"github.com/jmoiron/sqlx"
@@ -15,7 +15,7 @@ const (
 	confPath = "../../../config/config.yaml"
 )
 
-var testUser = autorisatione.User{Username: "user1", Password: "user1"}
+var testUser = autorizatione.User{Username: "userTestRepo", Password: "user1"}
 
 func TestSaveUser(t *testing.T) {
 	config := config.GetConfiguration(confPath)
@@ -25,18 +25,18 @@ func TestSaveUser(t *testing.T) {
 	require.NoError(t, err)
 	defer db.Close()
 
-	tx, err := db.Beginx()
-	require.NoError(t, err)
-	defer tx.Rollback()
-
-	repo := autorisation.NewRepository()
+	repo := autorization.NewRepository()
 
 	t.Run("добавление юзера", func(t *testing.T) {
-		err := repo.SaveUser(tx, testUser)
+		tx, err := db.Beginx()
+		require.NoError(t, err)
+		defer tx.Rollback()
+
+		err = repo.SaveUser(tx, testUser)
 		require.NoError(t, err)
 
 		t.Run("Проверка", func(t *testing.T) {
-			var users []autorisatione.User
+			var users []autorizatione.User
 
 			err := tx.Select(&users, `select u.username, u.password from users as u`)
 			require.NoError(t, err)
@@ -59,14 +59,14 @@ func TestLoadUserByUsername(t *testing.T) {
 	require.NoError(t, err)
 	defer tx.Rollback()
 
-	repo := autorisation.NewRepository()
+	repo := autorization.NewRepository()
 
 	t.Run("добавление юзера", func(t *testing.T) {
 		err := repo.SaveUser(tx, testUser)
 		require.NoError(t, err)
 
 		t.Run("проверка поиска по имени", func(t *testing.T) {
-			var userFromDB *autorisatione.User
+			var userFromDB *autorizatione.User
 
 			userFromDB, err = repo.LoadUserByUsername(tx, testUser.Username)
 			require.NoError(t, err)

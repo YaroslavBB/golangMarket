@@ -1,8 +1,8 @@
-package autorisation
+package autorization
 
 import (
 	"database/sql"
-	"task/internal/entity/autorisatione"
+	"task/internal/entity/autorizatione"
 	"task/internal/entity/global"
 
 	"github.com/jmoiron/sqlx"
@@ -11,25 +11,25 @@ import (
 type repository struct {
 }
 
-// NewRepository репозиторий autorisation
+// NewRepository репозиторий autorization
 func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) SaveUser(tx *sqlx.Tx, user autorisatione.User) error {
+func (r *repository) SaveUser(tx *sqlx.Tx, user autorizatione.User) error {
 	sqlQuery := `insert into users (username, password) values ($1, $2)`
 
 	_, err := tx.Exec(sqlQuery, user.Username, user.Password)
 	if err != nil {
 		return err
 	}
-	return tx.Commit()
+	return nil
 }
 
-func (r *repository) LoadUserByUsername(tx *sqlx.Tx, username string) (*autorisatione.User, error) {
+func (r *repository) LoadUserByUsername(tx *sqlx.Tx, username string) (*autorizatione.User, error) {
 	sqlQuery := `select u.username, u.password from users as u where username = $1`
 
-	var user autorisatione.User
+	var user autorizatione.User
 
 	err := tx.Get(&user, sqlQuery, username)
 	switch err {

@@ -1,4 +1,4 @@
-package autorisatione
+package autorizatione
 
 type User struct {
 	// UserID   int    `json:"user_id" db:"user_id"`

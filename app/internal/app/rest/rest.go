@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"task/internal/entity/autorisatione"
+	"task/internal/entity/autorizatione"
 	"task/internal/entity/global"
 	"task/internal/entity/producte"
-	"task/internal/modules/autorisation"
+	"task/internal/modules/autorization"
 	"task/internal/modules/product"
 
 	"github.com/dgrijalva/jwt-go"
@@ -21,15 +21,15 @@ type Rest struct {
 	server       *gin.Engine
 	db           *sqlx.DB
 	product      product.Service
-	autorisation autorisation.Service
+	autorization autorization.Service
 }
 
-func NewRest(server *gin.Engine, db *sqlx.DB, product product.Service, autorisation autorisation.Service) *Rest {
+func NewRest(server *gin.Engine, db *sqlx.DB, product product.Service, autorization autorization.Service) *Rest {
 	rest := &Rest{
 		server:       server,
 		db:           db,
 		product:      product,
-		autorisation: autorisation,
+		autorization: autorization,
 	}
 
 	group := server.Group("/api")
@@ -71,14 +71,14 @@ func (r *Rest) Register(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	var userFromLoginForm autorisatione.User
+	var userFromLoginForm autorizatione.User
 
 	err = c.BindJSON(&userFromLoginForm)
 	if err != nil {
 		errorMessage(c, err)
 		return
 	}
-	_, err = r.autorisation.LoadUserByUsername(tx, userFromLoginForm.Username)
+	_, err = r.autorization.LoadUserByUsername(tx, userFromLoginForm.Username)
 
 	switch err {
 	case nil:
@@ -86,10 +86,15 @@ func (r *Rest) Register(c *gin.Context) {
 		return
 
 	case global.ErrNoDataFound:
-		err = r.autorisation.SaveUser(tx, userFromLoginForm)
+		err = r.autorization.SaveUser(tx, userFromLoginForm)
 		if err != nil {
 			errorMessage(c, err)
 			return
+		}
+
+		err := tx.Commit()
+		if err != nil {
+			fmt.Println("ошибка закрытия транзакции")
 		}
 
 		token, err := createToken(userFromLoginForm.Username)
@@ -116,8 +121,8 @@ func (r *Rest) Login(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	var UserFromDB *autorisatione.User
-	var userFromLoginForm autorisatione.User
+	var UserFromDB *autorizatione.User
+	var userFromLoginForm autorizatione.User
 
 	err = c.BindJSON(&userFromLoginForm)
 	if err != nil {
@@ -125,7 +130,7 @@ func (r *Rest) Login(c *gin.Context) {
 		return
 	}
 
-	UserFromDB, err = r.autorisation.LoadUserByUsername(tx, userFromLoginForm.Username)
+	UserFromDB, err = r.autorization.LoadUserByUsername(tx, userFromLoginForm.Username)
 
 	if err != nil {
 		if err == global.ErrNoDataFound {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"task/config"
 	"task/internal/app/rest"
-	"task/internal/modules/autorisation"
+	"task/internal/modules/autorization"
 	"task/internal/modules/product"
 
 	"github.com/gin-gonic/gin"
@@ -32,10 +32,10 @@ func main() {
 	productRepo := product.NewRepository()
 	productService := product.NewService(productRepo)
 
-	autorisationRepo := autorisation.NewRepository()
-	autorisationService := autorisation.NewService(autorisationRepo)
+	autorizationRepo := autorization.NewRepository()
+	autorizationService := autorization.NewService(autorizationRepo)
 
-	server := rest.NewRest(r, db, productService, autorisationService)
+	server := rest.NewRest(r, db, productService, autorizationService)
 
 	server.Run()
 }
