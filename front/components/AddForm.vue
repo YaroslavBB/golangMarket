@@ -1,77 +1,61 @@
-<template>
-  <form @submit.prevent="addProduct()">
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Добавление формы</p>
-        <button type="button" class="delete" @click="$emit('close')" />
-      </header>
-      <div class="modal-card-body">
-        <b-field class="mb-5">
-          <b-input
-            v-model="form"
-            placeholder="Укажите форму товара"
-            rounded
-            required
-          />
-        </b-field>
-
-        <b-field>
-          <b-numberinput
-            v-model="amount"
-            placeholder="Введите колличество товара"
-            rounded
-            required
-            
-          />
-        </b-field>
-        <b-field>
-          <b-numberinput
-            v-model="price"
-            placeholder="Укажите цену товара"
-            rounded
-            required
-          />
-        </b-field>
-        <b-field>
-          <b-datepicker
-            v-model="dateStart"
-            ref="datepicker"
-            expanded
-            placeholder="Укажите дату начала цен"
-            required
-            locale="ru-RU"
-          >
-          </b-datepicker>
-          <b-button
-            @click="$refs.datepicker.toggle()"
-            icon-left="calendar-today"
-            type="is-primary"
-          />
-        </b-field>
-        <b-field>
-          <b-datepicker
-            v-model="dateEnd"
-            ref="datepicker2"
-            expanded
-            placeholder="Укажите дату конца цен"
-            required
-            locale="ru-RU"
-          >
-          </b-datepicker>
-          <b-button
-            @click="$refs.datepicker2.toggle()"
-            icon-left="calendar-today"
-            type="is-primary"
-          />
-        </b-field>
-      </div>
-      <footer class="modal-card-foot">
-        <button class="button is-success is-outlined" type="submit">
-          Добавить форму
-        </button>
-      </footer>
-    </div>
-  </form>
+<template lang="pug">
+form(@submit.prevent='addProduct()')
+  .modal-card
+    header.modal-card-head
+      p.modal-card-title Добавление формы
+      button.delete(type='button', @click='$emit("close")')
+    .modal-card-body
+      b-field.mb-5
+        b-input(
+          v-model='form',
+          placeholder='Укажите форму товара',
+          rounded='',
+          required=''
+        )
+      b-field
+        b-numberinput(
+          v-model='amount',
+          placeholder='Введите колличество товара',
+          rounded='',
+          required=''
+        )
+      b-field
+        b-numberinput(
+          v-model='price',
+          placeholder='Укажите цену товара',
+          rounded='',
+          required=''
+        )
+      b-field
+        b-datepicker(
+          v-model='dateStart',
+          ref='datepicker',
+          expanded='',
+          placeholder='Укажите дату начала цен',
+          required='',
+          locale='ru-RU'
+        )
+        b-button(
+          @click='$refs.datepicker.toggle()',
+          icon-left='calendar-today',
+          type='is-primary'
+        )
+      b-field
+        b-datepicker(
+          v-model='dateEnd',
+          ref='datepicker2',
+          expanded='',
+          placeholder='Укажите дату конца цен',
+          required='',
+          locale='ru-RU'
+        )
+        b-button(
+          @click='$refs.datepicker2.toggle()',
+          icon-left='calendar-today',
+          type='is-primary'
+        )
+    footer.modal-card-foot
+      button.button.is-success.is-outlined(type='submit') Добавить форму
 </template>
 
 <script lang="ts">

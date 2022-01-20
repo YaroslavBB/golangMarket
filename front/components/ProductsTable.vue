@@ -1,65 +1,46 @@
-<template>
-  <section class="section">
-    <SearchProduct></SearchProduct>
-    <b-field>
-      <b-button type="is-success" outlined @click="openAddProductModal"
-        >Добавить товар</b-button
-      >
-    </b-field>
-    <div class="column is-full">
-      <b-table :data="this.allProducts()" fullwidth>
-        <b-table-column
-          field="productId"
-          label="ID"
-          v-slot="props"
-          sortable
-          centered
-        >
-          {{ props.row.productId }}
-        </b-table-column>
-
-        <b-table-column
-          field="name"
-          label="Наименование продукта"
-          v-slot="props"
-          sortable
-          centered
-        >
-          {{ props.row.name }}
-        </b-table-column>
-
-        <b-table-column
-          field="dateAdded"
-          label="Дата добавления"
-          v-slot="props"
-          sortable
-          centered
-        >
-          {{ formatDate(props.row.dateAdded) }}
-        </b-table-column>
-        <b-table-column label="" v-slot="props" centered>
-          <b-button
-            type="is-primary"
-            outlined
-            @click="
-              openProductFormTableModal(props.row.productId, props.row.name)
-            "
-          >
-            Детали
-          </b-button>
-        </b-table-column>
-
-        <b-table-column label="" v-slot="props" centered>
-          <b-button
-            type="is-danger"
-            icon-right="delete"
-            @click="deleted(props.row.productId)"
-          >
-          </b-button>
-        </b-table-column>
-      </b-table>
-    </div>
-  </section>
+<template lang="pug">
+section.section
+  SearchProduct
+  b-field
+    b-button(type='is-success', outlined='', @click='openAddProductModal') Добавить товар
+  .column.is-full
+    b-table(:data='this.allProducts()', fullwidth='')
+      b-table-column(
+        field='productId',
+        label='ID',
+        v-slot='props',
+        sortable='',
+        centered=''
+      )
+        | {{ props.row.productId }}
+      b-table-column(
+        field='name',
+        label='Наименование продукта',
+        v-slot='props',
+        sortable='',
+        centered=''
+      )
+        | {{ props.row.name }}
+      b-table-column(
+        field='dateAdded',
+        label='Дата добавления',
+        v-slot='props',
+        sortable='',
+        centered=''
+      )
+        | {{ formatDate(props.row.dateAdded) }}
+      b-table-column(label='', v-slot='props', centered='')
+        b-button(
+          type='is-primary',
+          outlined='',
+          @click='openProductFormTableModal(props.row.productId, props.row.name)'
+        ) Детали
+      b-table-column(label='', v-slot='props', centered='')
+        b-button(
+          type='is-danger',
+          icon-right='delete',
+          @click='deleted(props.row.productId)'
+        )
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'

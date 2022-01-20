@@ -1,52 +1,36 @@
-<template>
-  <section class="section">
-    <div class="columns is-centered">
-      <div class="column is-6">
-        <form @submit.prevent="login()">
-          <b-field label="Имя пользователя">
-            <b-input
-              v-model="user.username"
-              placeholder="Введите имя пользователя"
-              required
-              icon="account"
-              minlength="3"
-              maxlength="15"
-              validation-message="Минимальное количество символов 3. Имя не может содержать пробелов"
-              pattern="[^' ']+"
-            ></b-input>
-          </b-field>
-
-          <b-field label="Введите пароль">
-            <b-input
-              v-model="user.password"
-              placeholder="Введите пароль"
-              password-reveal
-              required
-              minlength="3"
-              maxlength="15"
-              type="password"
-              icon="lock-outline"
-            ></b-input>
-          </b-field>
-          <div class="columns">
-            <b-field class="column is-1">
-              <button
-                class="button is-primary is-outlined is-centered"
-                type="submit"
-              >
-                Войти
-              </button>
-            </b-field>
-            <b-field class="column is-1">
-              <b-button type="is-ghost is-centered" @click="registration"
-                >Регистрация</b-button
-              >
-            </b-field>
-          </div>
-        </form>
-      </div>
-    </div>
-  </section>
+<template lang="pug">
+section.section
+  .columns.is-centered
+    .column.is-6
+      form(@submit.prevent='login()')
+        b-field(label='Имя пользователя')
+          b-input(
+            v-model='user.username',
+            placeholder='Введите имя пользователя',
+            required='',
+            icon='account',
+            minlength='3',
+            maxlength='15',
+            validation-message='Минимальное количество символов 3. Имя не может содержать пробелов',
+            pattern='[^\' \']+'
+          )
+        b-field(label='Введите пароль')
+          b-input(
+            v-model='user.password',
+            placeholder='Введите пароль',
+            password-reveal='',
+            required='',
+            minlength='3',
+            maxlength='15',
+            type='password',
+            icon='lock-outline'
+          )
+        .columns
+          b-field.column.is-1
+            button.button.is-primary.is-outlined.is-centered(type='submit')
+              | Войти
+          b-field.column.is-1
+            b-button(type='is-ghost is-centered', @click='registration') Регистрация
 </template>
 
 <script lang="ts">

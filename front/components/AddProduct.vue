@@ -1,80 +1,66 @@
-<template>
-  <form @submit.prevent="addProduct()">
-    <div class="modal-card" style="width: auto">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Добавление товара</p>
-        <button type="button" class="delete" @click="$emit('close')" />
-      </header>
-      <div class="modal-card-body">
-        <b-field>
-          <b-input
-            v-model="name"
-            placeholder="Введите наименование товара"
-            minlength="3"
-            rounded
-            required
-          />
-        </b-field>
-        <b-field>
-          <b-input v-model="form" placeholder="Укажите форму товара" rounded />
-        </b-field>
-        <b-field>
-          <b-numberinput
-            v-model="amount"
-            placeholder="Введите колличество товара"
-            rounded
-            type="number"
-            required
-          />
-        </b-field>
-        <b-field>
-          <b-numberinput
-            v-model="price"
-            placeholder="Укажите цену товара"
-            rounded
-            type="number"
-            required
-            
-          />
-        </b-field>
-        <b-field>
-          <b-datepicker
-            v-model="dateStart"
-            ref="datepicker"
-            expanded
-            placeholder="Укажите дату начала цен"
-            required
-            locale="ru-RU"
-          >
-          </b-datepicker>
-          <b-button
-            @click="$refs.datepicker.toggle()"
-            icon-left="calendar-today"
-            type="is-primary"
-          />
-        </b-field>
-        <b-field>
-          <b-datepicker
-            v-model="dateEnd"
-            ref="datepicker2"
-            expanded
-            placeholder="Укажите дату конца цен"
-            required
-            locale="ru-RU"
-          >
-          </b-datepicker>
-          <b-button
-            @click="$refs.datepicker2.toggle()"
-            icon-left="calendar-today"
-            type="is-primary"
-          />
-        </b-field>
-      </div>
-      <footer class="modal-card-foot">
-        <button class="button is-success is-outlined" type="submit">Добавить</button>
-      </footer>
-    </div>
-  </form>
+<template lang="pug">
+form(@submit.prevent='addProduct()')
+  .modal-card(style='width: auto')
+    header.modal-card-head
+      p.modal-card-title Добавление товара
+      button.delete(type='button', @click='$emit("close")')
+    .modal-card-body
+      b-field
+        b-input(
+          v-model='name',
+          placeholder='Введите наименование товара',
+          minlength='3',
+          rounded='',
+          required=''
+        )
+      b-field
+        b-input(v-model='form', placeholder='Укажите форму товара', rounded='')
+      b-field
+        b-numberinput(
+          v-model='amount',
+          placeholder='Введите колличество товара',
+          rounded='',
+          type='number',
+          required=''
+        )
+      b-field
+        b-numberinput(
+          v-model='price',
+          placeholder='Укажите цену товара',
+          rounded='',
+          type='number',
+          required=''
+        )
+      b-field
+        b-datepicker(
+          v-model='dateStart',
+          ref='datepicker',
+          expanded='',
+          placeholder='Укажите дату начала цен',
+          required='',
+          locale='ru-RU'
+        )
+        b-button(
+          @click='$refs.datepicker.toggle()',
+          icon-left='calendar-today',
+          type='is-primary'
+        )
+      b-field
+        b-datepicker(
+          v-model='dateEnd',
+          ref='datepicker2',
+          expanded='',
+          placeholder='Укажите дату конца цен',
+          required='',
+          locale='ru-RU'
+        )
+        b-button(
+          @click='$refs.datepicker2.toggle()',
+          icon-left='calendar-today',
+          type='is-primary'
+        )
+    footer.modal-card-foot
+      button.button.is-success.is-outlined(type='submit') Добавить
 </template>
 
 <script lang="ts">
@@ -104,11 +90,11 @@ export default class AddProduct extends Vue {
     }
     try {
       await this.ADD_NEW_PRODUCT(newProduct)
-     ;(this as any).$emit('close')
-     ;(this as any).$buefy.toast.open({
-       message: 'Успешно добавлено!',
-       type: 'is-success',
-     })
+      ;(this as any).$emit('close')
+      ;(this as any).$buefy.toast.open({
+        message: 'Успешно добавлено!',
+        type: 'is-success',
+      })
     } catch (err) {
       ;(this as any).$buefy.toast.open({
         message: err.response.data.error,

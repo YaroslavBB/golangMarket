@@ -1,7 +1,6 @@
-<template>
-  <section class="section">
-      <LoginForm></LoginForm>
-  </section>
+<template lang="pug">
+  section.section
+    LoginForm
 </template>
 
 <script lang="ts">

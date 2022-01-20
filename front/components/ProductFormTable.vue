@@ -1,54 +1,38 @@
-<template>
-  <div class="modal-card" style="width: auto">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Детальнее</p>
-      <button type="button" class="delete" @click="$emit('close')" />
-    </header>
-
-    <div class="modal-card-body">
-      <b-table :data="productForms || []" fullwidth>
-        <b-table-column field="form" label="Форма" v-slot="props" centered>
-          {{ props.row.form }}
-        </b-table-column>
-
-        <b-table-column
-          field="amount"
-          label="Количество"
-          v-slot="props"
-          centered
-        >
-          {{ props.row.amount }}
-        </b-table-column>
-
-        <b-table-column field="price" label="Цена" v-slot="props" centered>
-          {{ props.row.price }}
-        </b-table-column>
-
-        <b-table-column
-          field="dateStart"
-          label="Дата старта цены"
-          v-slot="props"
-          centered
-        >
-          {{ formatDate(props.row.dateStart) }}
-        </b-table-column>
-
-        <b-table-column
-          field="dateEnd"
-          label="Дата окончания цены"
-          v-slot="props"
-          centered
-        >
-          {{ formatDate(props.row.dateEnd) }}
-        </b-table-column>
-      </b-table>
-    </div>
-    <footer class="modal-card-foot">
-      <b-button type="is-success" @click="openAddFormModal" outlined>
-        Добавить форму
-      </b-button>
-    </footer>
-  </div>
+<template lang="pug">
+.modal-card(style='width: auto')
+  header.modal-card-head
+    p.modal-card-title Детальнее
+    button.delete(type='button', @click='$emit("close")')
+  .modal-card-body
+    b-table(:data='productForms || []', fullwidth='')
+      b-table-column(field='form', label='Форма', v-slot='props', centered='')
+        | {{ props.row.form }}
+      b-table-column(
+        field='amount',
+        label='Количество',
+        v-slot='props',
+        centered=''
+      )
+        | {{ props.row.amount }}
+      b-table-column(field='price', label='Цена', v-slot='props', centered='')
+        | {{ props.row.price }}
+      b-table-column(
+        field='dateStart',
+        label='Дата старта цены',
+        v-slot='props',
+        centered=''
+      )
+        | {{ formatDate(props.row.dateStart) }}
+      b-table-column(
+        field='dateEnd',
+        label='Дата окончания цены',
+        v-slot='props',
+        centered=''
+      )
+        | {{ formatDate(props.row.dateEnd) }}
+  footer.modal-card-foot
+    b-button(type='is-success', @click='openAddFormModal', outlined='')
+      | Добавить форму
 </template>
 
 <script lang="ts">

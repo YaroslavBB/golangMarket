@@ -1,62 +1,46 @@
-<template>
-  <div class="columns">
-    <b-field class="column is-3">
-      <b-input
-        v-model="searchQuery.searchName"
-        placeholder="Наименование товара..."
-        icon="magnify"
-        icon-clickable
-      >
-      </b-input>
-    </b-field>
-
-    <b-field class="column is-3">
-      <b-datepicker
-        v-model="searchQuery.searchStartDate"
-        locale="ru-RU"
-        ref="datepicker1"
-        expanded
-        placeholder="С '28.12.2021'..."
-      >
-      </b-datepicker>
-      <b-button
-        @click="$refs.datepicker1.toggle()"
-        icon-left="calendar-today"
-        type="is-primary"
-      />
-    </b-field>
-
-    <b-field class="column is-3">
-      <b-datepicker
-        v-model="searchQuery.searchEndDate"
-        locale="ru-RU"
-        ref="datepicker"
-        expanded
-        placeholder="По '5.01.2022'..."
-      >
-      </b-datepicker>
-      <b-button
-        @click="$refs.datepicker.toggle()"
-        icon-left="calendar-today"
-        type="is-primary"
-      />
-    </b-field>
-
-    <b-field class="column">
-      <b-button
-        icon-left="magnify"
-        type="search is-info is-light"
-        @click="search"
-        >Поиск</b-button
-      >
-    </b-field>
-
-    <b-field class="column is-2">
-      <b-button icon-left="refresh" type="is-warning is-light" @click="refresh"
-        >Очистить</b-button
-      >
-    </b-field>
-  </div>
+<template lang="pug">
+.columns
+  b-field.column.is-3
+    b-input(
+      v-model='searchQuery.searchName',
+      placeholder='Наименование товара...',
+      icon='magnify',
+      icon-clickable=''
+    )
+  b-field.column.is-3
+    b-datepicker(
+      v-model='searchQuery.searchStartDate',
+      locale='ru-RU',
+      ref='datepicker1',
+      expanded='',
+      placeholder='С \'28.12.2021\'...'
+    )
+    b-button(
+      @click='$refs.datepicker1.toggle()',
+      icon-left='calendar-today',
+      type='is-primary'
+    )
+  b-field.column.is-3
+    b-datepicker(
+      v-model='searchQuery.searchEndDate',
+      locale='ru-RU',
+      ref='datepicker',
+      expanded='',
+      placeholder='По \'5.01.2022\'...'
+    )
+    b-button(
+      @click='$refs.datepicker.toggle()',
+      icon-left='calendar-today',
+      type='is-primary'
+    )
+  b-field.column
+    b-button(
+      icon-left='magnify',
+      type='search is-info is-light',
+      @click='search'
+    ) Поиск
+  b-field.column.is-2
+    b-button(icon-left='refresh', type='is-warning is-light', @click='refresh') Очистить
 </template>
 
 <script lang="ts">
