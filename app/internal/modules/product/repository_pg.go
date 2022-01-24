@@ -2,7 +2,6 @@ package product
 
 import (
 	"database/sql"
-	"fmt"
 	"task/internal/entity/global"
 	"task/internal/entity/producte"
 
@@ -50,30 +49,6 @@ func (r *repository) LoadProductFormByID(tx *sqlx.Tx, id int) ([]producte.Produc
 		return nil, global.ErrNoDataFound
 	}
 	return data, nil
-}
-
-func (r *repository) GetProductIdByName(tx *sqlx.Tx, name string) (int, error) {
-	sqlQuery := `select product_id from products where lower(products.name) = lower($1)`
-	var productID int
-
-	err := tx.Get(&productID, sqlQuery, name)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	return productID, nil
-}
-
-func (r *repository) GetTypeIdByProduct(tx *sqlx.Tx, product producte.ProductForm, productID int) (int, error) {
-	sqlQuery := `select type_id from product_types where lower(product_types.form) = lower($1) and product_id = $2`
-	var typeID int
-
-	err := tx.Get(&typeID, sqlQuery, product.Form, productID)
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	return typeID, nil
-
 }
 
 func (r *repository) UpdateProductAmount(tx *sqlx.Tx, product producte.ProductForm, typeID int) error {
@@ -133,19 +108,19 @@ func (r *repository) AddPriceHistoryProduct(tx *sqlx.Tx, typeID int, priceHistor
 	return nil
 }
 
-func (r *repository) GetAllId(tx *sqlx.Tx, productID int) ([]producte.AllId, error) {
+func (r *repository) GetAllId(tx *sqlx.Tx, productID int) ([]producte.ProductDependencies, error) {
 	sqlQuery := `select p.product_id, pt.type_id, ph.history_id
 				from products p
 				join product_types pt on p.product_id = pt.product_id
 				join price_history_product hpp on pt.type_id = hpp.product_type_id
 				join price_history ph on ph.history_id = hpp.price_history_id where p.product_id = $1`
-	var allID []producte.AllId
+	var productDependencies []producte.ProductDependencies
 
-	err := tx.Select(&allID, sqlQuery, productID)
+	err := tx.Select(&productDependencies, sqlQuery, productID)
 	if err != nil {
 		return nil, err
 	}
-	return allID, nil
+	return productDependencies, nil
 }
 
 func (r *repository) DeletePriceHistoryProduct(tx *sqlx.Tx, typeID int) error {
@@ -189,8 +164,8 @@ func (r *repository) DeleteProduct(tx *sqlx.Tx, productID int) error {
 	return nil
 }
 
-func (r *repository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.AllId, error) {
-	var data producte.AllId
+func (r *repository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.ProductDependencies, error) {
+	var data producte.ProductDependencies
 
 	err := tx.Get(&data, `
 		select p.product_id, pt.type_id
@@ -200,10 +175,11 @@ func (r *repository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string)
 	`, name, form)
 
 	if err != nil {
+		// уточнить
 		if err == sql.ErrNoRows {
-			return producte.AllId{}, nil
+			return producte.ProductDependencies{}, global.ErrNoDataFound
 		}
-		return producte.AllId{}, err
+		return producte.ProductDependencies{}, err
 	}
 
 	return data, nil

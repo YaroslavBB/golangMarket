@@ -44,7 +44,7 @@ func NewRest(server *gin.Engine, db *sqlx.DB, product product.Service, autorizat
 }
 
 func (r *Rest) Run() {
-	r.server.Run(":8080")
+	r.server.Run("localhost:8080")
 }
 
 func (r *Rest) Auth(c *gin.Context) {
@@ -95,6 +95,7 @@ func (r *Rest) Register(c *gin.Context) {
 		err := tx.Commit()
 		if err != nil {
 			fmt.Println("ошибка закрытия транзакции")
+			return
 		}
 
 		token, err := createToken(userFromLoginForm.Username)
@@ -121,8 +122,10 @@ func (r *Rest) Login(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	var UserFromDB *autorizatione.User
-	var userFromLoginForm autorizatione.User
+	var (
+		UserFromDB        *autorizatione.User
+		userFromLoginForm autorizatione.User
+	)
 
 	err = c.BindJSON(&userFromLoginForm)
 	if err != nil {

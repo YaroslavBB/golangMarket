@@ -51,14 +51,14 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import { Action } from 'vuex-class'
 import * as actionTypes from '../store/actionTypes'
 @Component
-export default class RegistrationForm extends Vue {
-  @Action(actionTypes.REGISTRATION) REGISTRATION
+export default class extends Vue {
+  @Action(actionTypes.REGISTRATION) REGISTRATION!: any
   user = {
     username: null,
     password: null,
   }
 
-  repeatPassword: string = null
+  repeatPassword: string | null = null
 
   comparePassword() {
     if (this.user.password === this.repeatPassword) {

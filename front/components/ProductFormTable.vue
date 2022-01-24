@@ -44,15 +44,15 @@ import AddForm from './AddForm.vue'
 @Component({
   components: { AddForm },
 })
-export default class ProductFormTable extends Vue {
-  @Action(actionTypes.GET_PRODUCT_FORMS) GET_PRODUCT_FORMS
-  @State('productForms') productForms
+export default class extends Vue {
+  @Action(actionTypes.GET_PRODUCT_FORMS) GET_PRODUCT_FORMS!: any
+  @State('productForms') productForms!: any
 
   @Prop()
-  name: string
+  name!: string
 
   @Prop()
-  productId: number
+  productId!: number
 
   formatDate(date: Date) {
     locale('ru')

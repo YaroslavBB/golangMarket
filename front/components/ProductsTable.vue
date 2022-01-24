@@ -53,11 +53,11 @@ import SearchProduct from './SearchProduct.vue'
 @Component({
   components: { ProductsFormTable, AddProduct, SearchProduct },
 })
-export default class ProductTable extends Vue {
-  @Action(actionTypes.GET_ALL_PRODUCTS) GET_ALL_PRODUCTS
-  @Action(actionTypes.DELETE_BY_ID) DELETE_BY_ID
-  @State('products') products
-  @State('searchProduct') searchProduct
+export default class extends Vue {
+  @Action(actionTypes.GET_ALL_PRODUCTS) GET_ALL_PRODUCTS!: any
+  @Action(actionTypes.DELETE_BY_ID) DELETE_BY_ID!: any
+  @State('products') products!: any
+  @State('searchProduct') searchProduct!: any
 
   showProductFormTableModal = false
   showAddProductModal = false

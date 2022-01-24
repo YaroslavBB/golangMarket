@@ -28,7 +28,7 @@ form(@submit.prevent='addProduct()')
         )
       b-field
         b-datepicker(
-          append-to-body
+          append-to-body,
           v-model='dateStart',
           ref='datepicker',
           expanded='',
@@ -43,7 +43,7 @@ form(@submit.prevent='addProduct()')
         )
       b-field
         b-datepicker(
-          append-to-body
+          append-to-body,
           v-model='dateEnd',
           ref='datepicker2',
           expanded='',
@@ -65,20 +65,20 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Action } from 'vuex-class'
 import * as actionTypes from '../store/actionTypes'
 @Component
-export default class AddForm extends Vue {
-  @Action(actionTypes.ADD_NEW_FORM) ADD_NEW_FORM
+export default class extends Vue {
+  @Action(actionTypes.ADD_NEW_FORM) ADD_NEW_FORM!: any
 
   @Prop()
-  name: string
+  name!: string
 
   @Prop()
-  productId: number
+  productId!: number
 
   form = null
   amount = null
   price = null
-  dateStart = null
-  dateEnd = null
+  dateStart: string | null  = null
+  dateEnd: string | null = null
 
   async addProduct() {
     const newProduct = {
@@ -87,8 +87,8 @@ export default class AddForm extends Vue {
       form: this.form,
       amount: Number(this.amount),
       price: Number(this.price),
-      dateStart: new Date(Date.parse(this.dateStart)),
-      dateEnd: new Date(Date.parse(this.dateEnd)),
+      dateStart: new Date(Date.parse(this.dateStart!)),
+      dateEnd: new Date(Date.parse(this.dateEnd!)),
     }
 
     try {

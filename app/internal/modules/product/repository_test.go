@@ -103,70 +103,6 @@ func TestLoadProductFormByID(t *testing.T) {
 	})
 }
 
-func TestGetProductIdByName(t *testing.T) {
-	config := config.NewConfig(confPath)
-	require.NotEmpty(t, config)
-
-	db, err := sqlx.Open("postgres", config.GetConfiguration())
-	require.NoError(t, err)
-	defer db.Close()
-
-	tx, err := db.Beginx()
-	require.NoError(t, err)
-	defer tx.Rollback()
-
-	repo := product.NewRepository()
-
-	t.Run("добавление продукта", func(t *testing.T) {
-		id, err := repo.AddProduct(tx, testProduct)
-		require.NoError(t, err)
-		require.NotEmpty(t, id)
-
-		t.Run("получение id по имени", func(t *testing.T) {
-			searchId, err := repo.GetProductIdByName(tx, testProduct.Name)
-			require.NoError(t, err)
-			require.NotEmpty(t, searchId)
-
-			require.Equal(t, id, searchId)
-		})
-	})
-}
-
-func TestGetTypeIdByProduct(t *testing.T) {
-	config := config.NewConfig(confPath)
-	require.NotEmpty(t, config)
-
-	db, err := sqlx.Open("postgres", config.GetConfiguration())
-	require.NoError(t, err)
-	defer db.Close()
-
-	tx, err := db.Beginx()
-	require.NoError(t, err)
-	defer tx.Rollback()
-
-	repo := product.NewRepository()
-
-	t.Run("добавление продукта", func(t *testing.T) {
-		id, err := repo.AddProduct(tx, testProduct)
-		require.NoError(t, err)
-		require.NotEmpty(t, id)
-
-		t.Run("добавление формы", func(t *testing.T) {
-			tId, err := repo.AddProductType(tx, testProduct, id)
-			require.NoError(t, err)
-			require.NotEmpty(t, tId)
-
-			t.Run("проверка id", func(t *testing.T) {
-				searchTID, err := repo.GetTypeIdByProduct(tx, testProduct, id)
-				require.NoError(t, err)
-				require.NotEmpty(t, searchTID)
-
-				require.Equal(t, tId, int64(searchTID))
-			})
-		})
-	})
-}
-
 func TestUpdateProductAmount(t *testing.T) {
 	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
@@ -244,7 +180,8 @@ func TestAddProduct(t *testing.T) {
 		require.NotEmpty(t, id)
 
 		t.Run("проверка поиском по имени", func(t *testing.T) {
-			searchId, err := repo.GetProductIdByName(tx, testProduct.Name)
+			var searchId int
+			err := tx.Get(&searchId, `select product_id from products where lower(products.name) = lower($1)`, testProduct.Name)
 			require.NoError(t, err)
 			require.NotEmpty(t, searchId)
 
@@ -324,7 +261,8 @@ func TestAddProductType(t *testing.T) {
 			require.NotEmpty(t, tId)
 
 			t.Run("проверка id формы по id продукта", func(t *testing.T) {
-				searchTID, err := repo.GetTypeIdByProduct(tx, testProduct, id)
+				var searchTID int64
+				err := tx.Get(&searchTID, `select type_id from product_types where lower(product_types.form) = lower($1) and product_id = $2`, testProduct.Form, id)
 				require.NoError(t, err)
 				require.NotEmpty(t, searchTID)
 
@@ -414,14 +352,14 @@ func TestGetAllId(t *testing.T) {
 					require.NoError(t, err)
 
 					t.Run("получение всех ID", func(t *testing.T) {
-						allID, err := repo.GetAllId(tx, productID)
+						productDependencies, err := repo.GetAllId(tx, productID)
 						require.NoError(t, err)
 
 						var productIdList []int
 						var typeIdList []int
 						var historyIdList []int
 
-						for _, id := range allID {
+						for _, id := range productDependencies {
 							productIdList = append(productIdList, id.ProductId)
 							typeIdList = append(typeIdList, int(id.TypeId.Int64))
 							historyIdList = append(historyIdList, id.PriceHistoryId)

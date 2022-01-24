@@ -71,15 +71,15 @@ import { Action } from 'vuex-class'
 import * as actionTypes from '../store/actionTypes'
 
 @Component
-export default class AddProduct extends Vue {
-  @Action(actionTypes.ADD_NEW_PRODUCT) ADD_NEW_PRODUCT
+export default class extends Vue {
+  @Action(actionTypes.ADD_NEW_PRODUCT) ADD_NEW_PRODUCT!: any
 
   name = null
   form = null
   amount = null
   price = null
-  dateStart = null
-  dateEnd = null
+  dateStart: string | null = null
+  dateEnd:string | null = null
 
   async addProduct() {
     const newProduct = {
@@ -87,8 +87,8 @@ export default class AddProduct extends Vue {
       form: this.form,
       amount: this.amount,
       price: this.price,
-      dateStart: new Date(Date.parse(this.dateStart)),
-      dateEnd: new Date(Date.parse(this.dateEnd)),
+      dateStart: new Date(Date.parse(this.dateStart!)),
+      dateEnd: new Date(Date.parse(this.dateEnd!)),
     }
     try {
       await this.ADD_NEW_PRODUCT(newProduct)

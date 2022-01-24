@@ -47,10 +47,10 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import moment, { locale } from 'moment'
 import * as mutationType from '../store/mutationTypes'
 @Component
-export default class SearchProduct extends Vue {
-  @State('searchProduct') searchProduct
-  @Mutation(mutationType.SEARCH_PRODUCT) SEARCH_PRODUCT
-  @Mutation(mutationType.REFRESH) REFRESH
+export default class extends Vue {
+  @State('searchProduct') searchProduct!: any
+  @Mutation(mutationType.SEARCH_PRODUCT) SEARCH_PRODUCT!: any
+  @Mutation(mutationType.REFRESH) REFRESH!: any
 
   date = new Date()
   searchQuery = {

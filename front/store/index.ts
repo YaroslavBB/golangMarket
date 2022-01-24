@@ -64,14 +64,14 @@ export const mutations: MutationTree<RootState> = {
     },
 
     [mutationTypes.SEARCH_PRODUCT](state, searchQuery: SearchQuery) {
-        locale("en")
-        const startDate = moment(searchQuery.searchStartDate).format("l")
-        const endDate = moment(searchQuery.searchEndDate).format("l")
+        // locale("en")
+        const startDate = moment(searchQuery.searchStartDate).format()
+        const endDate = moment(searchQuery.searchEndDate).format()
 
        
         state.searchProduct = state.products.filter((product) => {
-            const productDate = moment(product.dateAdded).format("l")
-            if (moment(productDate).isAfter(startDate) && moment(productDate).isBefore(endDate)) {
+            const productDate = moment(product.dateAdded).format()
+            if (productDate >= startDate && productDate <= endDate) {
                 return product.name.toLowerCase().includes(searchQuery.searchName.toLowerCase())
             }
         })

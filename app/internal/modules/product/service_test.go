@@ -21,13 +21,13 @@ func TestDeleteProductById(t *testing.T) {
 	mockRepo := product.NewMockRepository(ctrl)
 	service := product.NewService(mockRepo)
 
-	testID := producte.AllId{
+	testID := producte.ProductDependencies{
 		ProductId:      98,
 		TypeId:         sql.NullInt64{Int64: 18, Valid: true},
 		PriceHistoryId: 32,
 	}
 
-	testIDList := make([]producte.AllId, 0)
+	testIDList := make([]producte.ProductDependencies, 0)
 	testIDList = append(testIDList, testID)
 
 	t.Run("удаление продукта", func(t *testing.T) {
@@ -92,7 +92,7 @@ func TestAddNewProduct(t *testing.T) {
 	testProduct = producte.ProductForm{Name: "test", Form: "test", Amount: 1, Price: 1, DateStart: time.Now(), DateEnd: time.Now()}
 
 	t.Run("Добавление нового продукта", func(t *testing.T) {
-		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.AllId{}, nil).Times(1)
+		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.ProductDependencies{}, nil).Times(1)
 		mockRepo.EXPECT().AddProduct(gomock.Any(), testProduct).Return(12, nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistory(gomock.Any(), testProduct).Return(34, nil).Times(1)
 		mockRepo.EXPECT().AddProductType(gomock.Any(), testProduct, 12).Return(int64(43), nil).Times(1)
@@ -102,7 +102,7 @@ func TestAddNewProduct(t *testing.T) {
 	})
 	t.Run("Добавление формы в существующий продукт", func(t *testing.T) {
 		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).
-			Return(producte.AllId{ProductId: 23, TypeId: sql.NullInt64{Int64: 0, Valid: false}}, nil).Times(1)
+			Return(producte.ProductDependencies{ProductId: 23, TypeId: sql.NullInt64{Int64: 0, Valid: false}}, nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistory(gomock.Any(), testProduct).Return(13, nil).Times(1)
 		mockRepo.EXPECT().AddProductType(gomock.Any(), testProduct, 23).Return(int64(12), nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistoryProduct(gomock.Any(), int(12), 13).Return(nil).Times(1)
@@ -111,32 +111,32 @@ func TestAddNewProduct(t *testing.T) {
 	})
 	t.Run("Увеличение колличества продукта", func(t *testing.T) {
 		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).
-			Return(producte.AllId{ProductId: 14, TypeId: sql.NullInt64{Int64: 32, Valid: true}}, nil).Times(1)
+			Return(producte.ProductDependencies{ProductId: 14, TypeId: sql.NullInt64{Int64: 32, Valid: true}}, nil).Times(1)
 		mockRepo.EXPECT().UpdateProductAmount(gomock.Any(), testProduct, 32).Return(nil).Times(1)
 
 		r.NoError(service.AddNewProduct(nil, testProduct))
 	})
 	t.Run("Ошибка при добавлении нового продукта на этапе получения id формы и продукта", func(t *testing.T) {
 		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).
-			Return(producte.AllId{}, global.ErrNoDataFound).Times(1)
+			Return(producte.ProductDependencies{}, global.ErrNoDataFound).Times(1)
 
 		r.Equal(global.ErrNoDataFound, service.AddNewProduct(nil, testProduct))
 	})
 	t.Run("ошибка при добавлени товара на этапе добавления продукта", func(t *testing.T) {
-		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.AllId{}, nil).Times(1)
+		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.ProductDependencies{}, nil).Times(1)
 		mockRepo.EXPECT().AddProduct(gomock.Any(), testProduct).Return(0, global.ErrNoDataFound).Times(1)
 
 		r.Equal(global.ErrNoDataFound, service.AddNewProduct(nil, testProduct))
 	})
 	t.Run("ошибка при добавлении продукта на этапе добавления истории цен", func(t *testing.T) {
-		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.AllId{}, nil).Times(1)
+		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.ProductDependencies{}, nil).Times(1)
 		mockRepo.EXPECT().AddProduct(gomock.Any(), testProduct).Return(12, nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistory(gomock.Any(), testProduct).Return(0, global.ErrNoDataFound).Times(1)
 
 		r.Equal(global.ErrNoDataFound, service.AddNewProduct(nil, testProduct))
 	})
 	t.Run("ошибка при добавлении продукта на этапе добавления формы", func(t *testing.T) {
-		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.AllId{}, nil).Times(1)
+		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.ProductDependencies{}, nil).Times(1)
 		mockRepo.EXPECT().AddProduct(gomock.Any(), testProduct).Return(12, nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistory(gomock.Any(), testProduct).Return(34, nil).Times(1)
 		mockRepo.EXPECT().AddProductType(gomock.Any(), testProduct, 12).Return(int64(0), global.ErrNoDataFound).Times(1)
@@ -144,7 +144,7 @@ func TestAddNewProduct(t *testing.T) {
 		r.Equal(global.ErrNoDataFound, service.AddNewProduct(nil, testProduct))
 	})
 	t.Run("ошибка при добавлении продукта на этапе добавления связи истории цен и формы", func(t *testing.T) {
-		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.AllId{}, nil).Times(1)
+		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).Return(producte.ProductDependencies{}, nil).Times(1)
 		mockRepo.EXPECT().AddProduct(gomock.Any(), testProduct).Return(12, nil).Times(1)
 		mockRepo.EXPECT().AddPriceHistory(gomock.Any(), testProduct).Return(34, nil).Times(1)
 		mockRepo.EXPECT().AddProductType(gomock.Any(), testProduct, 12).Return(int64(43), nil).Times(1)
@@ -154,7 +154,7 @@ func TestAddNewProduct(t *testing.T) {
 	})
 	t.Run("ошибка при увеличении колличства продукта", func(t *testing.T) {
 		mockRepo.EXPECT().GetProductIdAndTypeIdByName(gomock.Any(), testProduct.Name, testProduct.Form).
-			Return(producte.AllId{ProductId: 14, TypeId: sql.NullInt64{Int64: 32, Valid: true}}, nil).Times(1)
+			Return(producte.ProductDependencies{ProductId: 14, TypeId: sql.NullInt64{Int64: 32, Valid: true}}, nil).Times(1)
 		mockRepo.EXPECT().UpdateProductAmount(gomock.Any(), testProduct, 32).Return(global.ErrNoDataFound).Times(1)
 
 		r.Equal(global.ErrNoDataFound, service.AddNewProduct(nil, testProduct))

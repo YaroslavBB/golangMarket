@@ -38,8 +38,9 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import { Action } from 'vuex-class'
 import * as actionTypes from '../store/actionTypes'
 @Component
-export default class LoginForm extends Vue {
-  @Action(actionTypes.LOGIN) LOGIN
+export default class extends Vue {
+  @Action(actionTypes.LOGIN) LOGIN!: any
+
   user = {
     username: null,
     password: null,

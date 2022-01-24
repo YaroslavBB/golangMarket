@@ -24,7 +24,7 @@ type ProductForm struct {
 	DateEnd       time.Time `db:"date_end" json:"dateEnd"`
 }
 
-type AllId struct {
+type ProductDependencies struct {
 	ProductId      int           `db:"product_id"`
 	TypeId         sql.NullInt64 `db:"type_id"`
 	PriceHistoryId int           `db:"history_id"`

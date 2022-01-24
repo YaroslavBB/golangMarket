@@ -151,10 +151,10 @@ func (mr *MockRepositoryMockRecorder) DeleteTypeProduct(tx, typeID interface{}) 
 }
 
 // GetAllId mocks base method.
-func (m *MockRepository) GetAllId(tx *sqlx.Tx, productID int) ([]producte.AllId, error) {
+func (m *MockRepository) GetAllId(tx *sqlx.Tx, productID int) ([]producte.ProductDependencies, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllId", tx, productID)
-	ret0, _ := ret[0].([]producte.AllId)
+	ret0, _ := ret[0].([]producte.ProductDependencies)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -166,10 +166,10 @@ func (mr *MockRepositoryMockRecorder) GetAllId(tx, productID interface{}) *gomoc
 }
 
 // GetProductIdAndTypeIdByName mocks base method.
-func (m *MockRepository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.AllId, error) {
+func (m *MockRepository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.ProductDependencies, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetProductIdAndTypeIdByName", tx, name, form)
-	ret0, _ := ret[0].(producte.AllId)
+	ret0, _ := ret[0].(producte.ProductDependencies)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -178,36 +178,6 @@ func (m *MockRepository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form str
 func (mr *MockRepositoryMockRecorder) GetProductIdAndTypeIdByName(tx, name, form interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProductIdAndTypeIdByName", reflect.TypeOf((*MockRepository)(nil).GetProductIdAndTypeIdByName), tx, name, form)
-}
-
-// GetProductIdByName mocks base method.
-func (m *MockRepository) GetProductIdByName(tx *sqlx.Tx, name string) (int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProductIdByName", tx, name)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetProductIdByName indicates an expected call of GetProductIdByName.
-func (mr *MockRepositoryMockRecorder) GetProductIdByName(tx, name interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProductIdByName", reflect.TypeOf((*MockRepository)(nil).GetProductIdByName), tx, name)
-}
-
-// GetTypeIdByProduct mocks base method.
-func (m *MockRepository) GetTypeIdByProduct(tx *sqlx.Tx, product producte.ProductForm, productID int) (int, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTypeIdByProduct", tx, product, productID)
-	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetTypeIdByProduct indicates an expected call of GetTypeIdByProduct.
-func (mr *MockRepositoryMockRecorder) GetTypeIdByProduct(tx, product, productID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTypeIdByProduct", reflect.TypeOf((*MockRepository)(nil).GetTypeIdByProduct), tx, product, productID)
 }
 
 // LoadAllProducts mocks base method.
