@@ -68,7 +68,7 @@ export default class RegistrationForm extends Vue {
   }
 
   login() {
-    ;(this as any).$router.push('/sign-in/login')
+    ;(this as any).$router.push('/sign-in')
   }
 
   async register() {

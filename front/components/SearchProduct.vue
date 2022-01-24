@@ -13,7 +13,6 @@
       locale='ru-RU',
       ref='datepicker1',
       expanded='',
-      placeholder='С \'28.12.2021\'...'
     )
     b-button(
       @click='$refs.datepicker1.toggle()',
@@ -26,7 +25,6 @@
       locale='ru-RU',
       ref='datepicker',
       expanded='',
-      placeholder='По \'5.01.2022\'...'
     )
     b-button(
       @click='$refs.datepicker.toggle()',
@@ -85,6 +83,19 @@ export default class SearchProduct extends Vue {
   }
 
   refresh() {
+    this.searchQuery = {
+      searchStartDate: new Date(
+        this.date.getFullYear(),
+        this.date.getMonth(),
+        1
+      ),
+      searchEndDate: new Date(
+        this.date.getFullYear(),
+        this.date.getMonth() + 1,
+        0
+      ),
+      searchName: '',
+    }
     this.REFRESH()
   }
 }

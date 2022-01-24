@@ -9,5 +9,5 @@ import RegistrationForm from '../../components/RegistrationForm.vue'
 @Component({
   components: { RegistrationForm },
 })
-export default class Logun extends Vue {}
+export default class extends Vue {}
 </script>

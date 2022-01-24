@@ -1,6 +1,9 @@
 package producte
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Product struct {
 	ProductId int       `db:"product_id" json:"productId"`
@@ -22,7 +25,7 @@ type ProductForm struct {
 }
 
 type AllId struct {
-	ProductId      int `db:"product_id"`
-	TypeId         int `db:"type_id"`
-	PriceHistoryId int `db:"history_id"`
+	ProductId      int           `db:"product_id"`
+	TypeId         sql.NullInt64 `db:"type_id"`
+	PriceHistoryId int           `db:"history_id"`
 }

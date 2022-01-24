@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"task/config"
 	"task/internal/app/rest"
 	"task/internal/modules/autorization"
@@ -13,10 +14,9 @@ import (
 )
 
 func main() {
-	confPath := "config/config.yaml"
-	psqlInfo := config.GetConfiguration(confPath)
+	config := config.NewConfig(os.Getenv("CONF_PATH"))
 
-	db, err := sqlx.Open("postgres", psqlInfo)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	if err != nil {
 		log.Fatalln(err)
 	}

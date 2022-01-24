@@ -6,22 +6,29 @@ import (
 	"github.com/jinzhu/configor"
 )
 
-var Config = struct {
+type Config struct {
 	DB struct {
-		Host     string `yml:"host"`
-		Port     int    `yml:"port"`
-		User     string `yml:"user"`
-		Password string `yml:"password"`
-		DBName   string `yml:"dbname"`
-	}
-}{}
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		DBName   string `yaml:"dbname"`
+	} `yaml:"db"`
+}
 
-func GetConfiguration(confPath string) string {
-	configor.Load(&Config, confPath)
+func NewConfig(confPath string) *Config {
+	var conf Config
+
+	configor.Load(&conf, confPath)
+
+	return &conf
+}
+
+func (c *Config) GetConfiguration() string {
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		Config.DB.Host, Config.DB.Port, Config.DB.User, Config.DB.Password, Config.DB.DBName)
+		c.DB.Host, c.DB.Port, c.DB.User, c.DB.Password, c.DB.DBName)
 
 	return psqlInfo
 }

@@ -1,6 +1,7 @@
 package product
 
 import (
+	"database/sql"
 	"fmt"
 	"task/internal/entity/global"
 	"task/internal/entity/producte"
@@ -88,7 +89,7 @@ func (r *repository) UpdateProductAmount(tx *sqlx.Tx, product producte.ProductFo
 
 func (r *repository) AddProduct(tx *sqlx.Tx, product producte.ProductForm) (int, error) {
 	sqlQuery := `insert into products (name, date_added, included)
-				 values ($1, CURRENT_TIMESTAMP, true) returning product_id`
+				 values ($1, CURRENT_DATE, true) returning product_id`
 	var productID int
 
 	err := tx.QueryRow(sqlQuery, product.Name).Scan(&productID)
@@ -110,7 +111,7 @@ func (r *repository) AddPriceHistory(tx *sqlx.Tx, product producte.ProductForm) 
 	return priceHistoryID, nil
 }
 
-func (r *repository) AddProductType(tx *sqlx.Tx, product producte.ProductForm, productID int) (int, error) {
+func (r *repository) AddProductType(tx *sqlx.Tx, product producte.ProductForm, productID int) (int64, error) {
 	sqlQuery := `insert into product_types(product_id, form, amount, available) values ($1, $2, $3, true) returning type_id`
 	var typeID int
 
@@ -119,7 +120,7 @@ func (r *repository) AddProductType(tx *sqlx.Tx, product producte.ProductForm, p
 		return 0, err
 	}
 
-	return typeID, nil
+	return int64(typeID), nil
 }
 
 func (r *repository) AddPriceHistoryProduct(tx *sqlx.Tx, typeID int, priceHistoryID int) error {
@@ -186,4 +187,24 @@ func (r *repository) DeleteProduct(tx *sqlx.Tx, productID int) error {
 		return err
 	}
 	return nil
+}
+
+func (r *repository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.AllId, error) {
+	var data producte.AllId
+
+	err := tx.Get(&data, `
+		select p.product_id, pt.type_id
+		from products p
+		left outer join product_types pt on (p.product_id = pt.product_id and pt.form = $2)
+		where p.name = $1
+	`, name, form)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return producte.AllId{}, nil
+		}
+		return producte.AllId{}, err
+	}
+
+	return data, nil
 }

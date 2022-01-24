@@ -18,10 +18,10 @@ const (
 var testUser = autorizatione.User{Username: "userTestRepo", Password: "user1"}
 
 func TestSaveUser(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -48,10 +48,10 @@ func TestSaveUser(t *testing.T) {
 
 func TestLoadUserByUsername(t *testing.T) {
 
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 

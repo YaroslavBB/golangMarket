@@ -19,10 +19,10 @@ const (
 var testProduct = producte.ProductForm{Name: "test", Form: "test", Amount: 1, Price: 1, DateStart: time.Now(), DateEnd: time.Now()}
 
 func TestLoadAllProducts(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -52,10 +52,10 @@ func TestLoadAllProducts(t *testing.T) {
 }
 
 func TestLoadProductFormByID(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -81,7 +81,7 @@ func TestLoadProductFormByID(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и новара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("проверка формы", func(t *testing.T) {
@@ -104,10 +104,10 @@ func TestLoadProductFormByID(t *testing.T) {
 }
 
 func TestGetProductIdByName(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -133,10 +133,10 @@ func TestGetProductIdByName(t *testing.T) {
 }
 
 func TestGetTypeIdByProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -161,17 +161,17 @@ func TestGetTypeIdByProduct(t *testing.T) {
 				require.NoError(t, err)
 				require.NotEmpty(t, searchTID)
 
-				require.Equal(t, tId, searchTID)
+				require.Equal(t, tId, int64(searchTID))
 			})
 		})
 	})
 }
 
 func TestUpdateProductAmount(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -197,11 +197,11 @@ func TestUpdateProductAmount(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и новара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("обновление количества", func(t *testing.T) {
-						err := repo.UpdateProductAmount(tx, testProduct, tId)
+						err := repo.UpdateProductAmount(tx, testProduct, int(tId))
 						require.NoError(t, err)
 
 						t.Run("проверка данных", func(t *testing.T) {
@@ -225,10 +225,10 @@ func TestUpdateProductAmount(t *testing.T) {
 }
 
 func TestAddProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -254,10 +254,10 @@ func TestAddProduct(t *testing.T) {
 }
 
 func TestAddPriceHistory(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -283,7 +283,7 @@ func TestAddPriceHistory(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и товара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("проверка", func(t *testing.T) {
@@ -300,10 +300,10 @@ func TestAddPriceHistory(t *testing.T) {
 }
 
 func TestAddProductType(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -328,17 +328,17 @@ func TestAddProductType(t *testing.T) {
 				require.NoError(t, err)
 				require.NotEmpty(t, searchTID)
 
-				require.Equal(t, tId, searchTID)
+				require.Equal(t, tId, int64(searchTID))
 			})
 		})
 	})
 }
 
 func TestAddPriceHistoryProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -364,7 +364,7 @@ func TestAddPriceHistoryProduct(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и новара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("Проверка", func(t *testing.T) {
@@ -381,10 +381,10 @@ func TestAddPriceHistoryProduct(t *testing.T) {
 }
 
 func TestGetAllId(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -410,7 +410,7 @@ func TestGetAllId(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и новара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("получение всех ID", func(t *testing.T) {
@@ -423,12 +423,12 @@ func TestGetAllId(t *testing.T) {
 
 						for _, id := range allID {
 							productIdList = append(productIdList, id.ProductId)
-							typeIdList = append(typeIdList, id.TypeId)
+							typeIdList = append(typeIdList, int(id.TypeId.Int64))
 							historyIdList = append(historyIdList, id.PriceHistoryId)
 						}
 
 						require.Contains(t, productIdList, productID)
-						require.Contains(t, typeIdList, tId)
+						require.Contains(t, typeIdList, int(tId))
 						require.Contains(t, historyIdList, histId)
 
 					})
@@ -439,10 +439,10 @@ func TestGetAllId(t *testing.T) {
 }
 
 func TestDeletePriceHistoryProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -468,11 +468,11 @@ func TestDeletePriceHistoryProduct(t *testing.T) {
 				require.NotEmpty(t, histId)
 
 				t.Run("добавление связи цены и новара", func(t *testing.T) {
-					err = repo.AddPriceHistoryProduct(tx, tId, histId)
+					err = repo.AddPriceHistoryProduct(tx, int(tId), histId)
 					require.NoError(t, err)
 
 					t.Run("удаление связи цены и товара", func(t *testing.T) {
-						err = repo.DeletePriceHistoryProduct(tx, tId)
+						err = repo.DeletePriceHistoryProduct(tx, int(tId))
 						require.NoError(t, err)
 
 						t.Run("проверка", func(t *testing.T) {
@@ -489,10 +489,10 @@ func TestDeletePriceHistoryProduct(t *testing.T) {
 }
 
 func TestDeleteTypeProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -513,7 +513,7 @@ func TestDeleteTypeProduct(t *testing.T) {
 			require.NotEmpty(t, tId)
 
 			t.Run("удаление формы продукта", func(t *testing.T) {
-				err = repo.DeleteTypeProduct(tx, tId)
+				err = repo.DeleteTypeProduct(tx, int(tId))
 				require.NoError(t, err)
 
 				t.Run("проверка", func(t *testing.T) {
@@ -529,10 +529,10 @@ func TestDeleteTypeProduct(t *testing.T) {
 }
 
 func TestDeletePriceHistory(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -569,10 +569,10 @@ func TestDeletePriceHistory(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	config := config.GetConfiguration(confPath)
+	config := config.NewConfig(confPath)
 	require.NotEmpty(t, config)
 
-	db, err := sqlx.Open("postgres", config)
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
 	require.NoError(t, err)
 	defer db.Close()
 
@@ -597,6 +597,43 @@ func TestDeleteProduct(t *testing.T) {
 				require.NoError(t, err)
 
 				require.NotContains(t, productIdList, productID)
+			})
+		})
+	})
+}
+
+func TestGetProductIdAndTypeIdByName(t *testing.T) {
+	config := config.NewConfig(confPath)
+	require.NotEmpty(t, config)
+
+	db, err := sqlx.Open("postgres", config.GetConfiguration())
+	require.NoError(t, err)
+	defer db.Close()
+
+	tx, err := db.Beginx()
+	require.NoError(t, err)
+	defer tx.Rollback()
+
+	repo := product.NewRepository()
+	t.Run("добавление продукта", func(t *testing.T) {
+		productID, err := repo.AddProduct(tx, testProduct)
+		require.NoError(t, err)
+		require.NotEmpty(t, productID)
+
+		t.Run("добавление формы", func(t *testing.T) {
+			tId, err := repo.AddProductType(tx, testProduct, productID)
+			require.NoError(t, err)
+			require.NotEmpty(t, tId)
+
+			t.Run("получение id продукта и формы по имени", func(t *testing.T) {
+				testID, err := repo.GetProductIdAndTypeIdByName(tx, testProduct.Name, testProduct.Form)
+				require.NoError(t, err)
+				require.NotEmpty(t, testID)
+
+				t.Run("проверка", func(t *testing.T) {
+					require.Equal(t, productID, testID.ProductId)
+					require.Equal(t, int64(tId), testID.TypeId.Int64)
+				})
 			})
 		})
 	})

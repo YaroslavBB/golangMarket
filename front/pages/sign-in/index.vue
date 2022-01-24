@@ -9,7 +9,7 @@ import LoginForm from '../../components/LoginForm.vue'
 @Component({
   components: { LoginForm },
 })
-export default class Login extends Vue {}
+export default class extends Vue {}
 </script>
 
 <style>

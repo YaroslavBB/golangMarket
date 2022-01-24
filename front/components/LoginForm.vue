@@ -26,10 +26,10 @@ section.section
             icon='lock-outline'
           )
         .columns
-          b-field.column.is-1
+          b-field.column.is-2
             button.button.is-primary.is-outlined.is-centered(type='submit')
               | Войти
-          b-field.column.is-1
+          b-field.column.is-2
             b-button(type='is-ghost is-centered', @click='registration') Регистрация
 </template>
 
@@ -46,7 +46,7 @@ export default class LoginForm extends Vue {
   }
 
   registration() {
-    ;(this as any).$router.push('/sign-up/registration')
+    ;(this as any).$router.push('/sign-up')
   }
 
   async login() {

@@ -1,11 +1,12 @@
 #!/bin/bash
-export CONFIG_TYPE=""
+source variables.sh
 
 echo 'COMPILING...'
-rm ../bin/market
+rm $ROOT/bin/market
 
-cd ../
-go build -o bin/market || { echo 'build failed' ; exit 1; }
+cd $ROOT/cmd
+go build -o $ROOT/bin/market || { echo 'build failed' ; exit 1; }
 
 echo 'RUN'
-./bin/market
+cd $ROOT/bin
+./market

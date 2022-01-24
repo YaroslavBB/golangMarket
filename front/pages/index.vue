@@ -8,5 +8,5 @@ import ProductsTable from '../components/ProductsTable.vue'
 @Component({
   components: { ProductsTable },
 })
-export default class Index extends Vue {}
+export default class extends Vue {}
 </script>

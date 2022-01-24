@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export ROOT=../../..
-# source variables.sh
+source variables.sh
+
 export DEBUG=true
 export DEV=true
 
@@ -20,5 +20,5 @@ if [ -n "$2" ]
     echo $FUNC_NAME
 fi
 
-cd ../internal/modules/$MODULE
+cd $ROOT/internal/modules/$MODULE
 go test -v $FUNC_NAME

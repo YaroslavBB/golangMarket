@@ -224,12 +224,25 @@ func (r *Rest) AddNewProduct(c *gin.Context) {
 		errorMessage(c, fmt.Errorf("поля не могут быть пустыми"))
 		return
 	}
+	if product.Amount <= 0 {
+		errorMessage(c, fmt.Errorf("колличество продукта не может равняться 0 или быть отрицательным числом"))
+		return
+	}
+	if product.Price <= 0 {
+		errorMessage(c, fmt.Errorf("цена продукта не может равняться 0 или быть отрицательным числом"))
+		return
+	}
 
 	err = r.product.AddNewProduct(tx, product)
 
 	if err != nil {
 		errorMessage(c, err)
 		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("ошибка закрытия транзакции")
 	}
 
 	c.JSON(http.StatusOK, gin.H{"response": "Successfully added"})
@@ -257,6 +270,11 @@ func (r *Rest) DeleteProductById(c *gin.Context) {
 	if err != nil {
 		errorMessage(c, err)
 		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("ошибка закрытия транзакции")
 	}
 
 	c.JSON(http.StatusOK, gin.H{"response": "Deletion was successful"})

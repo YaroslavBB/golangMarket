@@ -28,6 +28,7 @@ form(@submit.prevent='addProduct()')
         )
       b-field
         b-datepicker(
+          append-to-body
           v-model='dateStart',
           ref='datepicker',
           expanded='',
@@ -42,6 +43,7 @@ form(@submit.prevent='addProduct()')
         )
       b-field
         b-datepicker(
+          append-to-body
           v-model='dateEnd',
           ref='datepicker2',
           expanded='',

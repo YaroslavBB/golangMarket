@@ -80,7 +80,7 @@ export default class ProductTable extends Vue {
       parent: this,
       component: AddProduct,
       canCancel: false,
-      fullScreen: true,
+      fullScreen: false,
     })
   }
 
@@ -109,7 +109,7 @@ export default class ProductTable extends Vue {
     try {
       await this.GET_ALL_PRODUCTS()
     } catch (error) {
-      ;(this as any).$router.push('/sign-in/login')
+      ;(this as any).$router.push('/sign-in')
     }
   }
 }

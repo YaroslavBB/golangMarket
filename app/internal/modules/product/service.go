@@ -26,14 +26,33 @@ func (s *service) LoadProductFormByID(tx *sqlx.Tx, id int) ([]producte.ProductFo
 }
 
 func (s *service) AddNewProduct(tx *sqlx.Tx, product producte.ProductForm) error {
-	var err error
-	var allID producte.AllId
-
-	allID.ProductId, err = s.repo.GetProductIdByName(tx, product.Name)
+	allID, err := s.repo.GetProductIdAndTypeIdByName(tx, product.Name, product.Form)
 	if err != nil {
 		return err
 	}
-	if allID.ProductId == 0 {
+
+	switch {
+	case allID.ProductId != 0 && allID.TypeId.Valid:
+		err = s.repo.UpdateProductAmount(tx, product, int(allID.TypeId.Int64))
+		if err != nil {
+			return err
+		}
+
+	case allID.ProductId != 0 && !allID.TypeId.Valid:
+		allID.PriceHistoryId, err = s.repo.AddPriceHistory(tx, product)
+		if err != nil {
+			return err
+		}
+		allID.TypeId.Int64, err = s.repo.AddProductType(tx, product, allID.ProductId)
+		if err != nil {
+			return err
+		}
+		err = s.repo.AddPriceHistoryProduct(tx, int(allID.TypeId.Int64), allID.PriceHistoryId)
+		if err != nil {
+			return err
+		}
+
+	case allID.ProductId == 0:
 		allID.ProductId, err = s.repo.AddProduct(tx, product)
 		if err != nil {
 			return err
@@ -42,40 +61,16 @@ func (s *service) AddNewProduct(tx *sqlx.Tx, product producte.ProductForm) error
 		if err != nil {
 			return err
 		}
-		allID.TypeId, err = s.repo.AddProductType(tx, product, allID.ProductId)
+		allID.TypeId.Int64, err = s.repo.AddProductType(tx, product, allID.ProductId)
 		if err != nil {
 			return err
 		}
-		err = s.repo.AddPriceHistoryProduct(tx, allID.TypeId, allID.PriceHistoryId)
+		err = s.repo.AddPriceHistoryProduct(tx, int(allID.TypeId.Int64), allID.PriceHistoryId)
 		if err != nil {
 			return err
-		}
-	} else {
-		allID.TypeId, err = s.repo.GetTypeIdByProduct(tx, product, allID.ProductId)
-		if err != nil {
-			return err
-		}
-		if allID.TypeId == 0 {
-			allID.PriceHistoryId, err = s.repo.AddPriceHistory(tx, product)
-			if err != nil {
-				return err
-			}
-			allID.TypeId, err = s.repo.AddProductType(tx, product, allID.ProductId)
-			if err != nil {
-				return err
-			}
-			err = s.repo.AddPriceHistoryProduct(tx, allID.TypeId, allID.PriceHistoryId)
-			if err != nil {
-				return err
-			}
-		} else {
-			err = s.repo.UpdateProductAmount(tx, product, allID.TypeId)
-			if err != nil {
-				return err
-			}
 		}
 	}
-	return tx.Commit()
+	return nil
 }
 
 func (s *service) DeleteProductById(tx *sqlx.Tx, productID int) error {
@@ -88,11 +83,11 @@ func (s *service) DeleteProductById(tx *sqlx.Tx, productID int) error {
 	}
 
 	for _, id := range allID {
-		err = s.repo.DeletePriceHistoryProduct(tx, id.TypeId)
+		err = s.repo.DeletePriceHistoryProduct(tx, int(id.TypeId.Int64))
 		if err != nil {
-			return nil
+			return err
 		}
-		err = s.repo.DeleteTypeProduct(tx, id.TypeId)
+		err = s.repo.DeleteTypeProduct(tx, int(id.TypeId.Int64))
 		if err != nil {
 			return err
 		}
@@ -101,10 +96,5 @@ func (s *service) DeleteProductById(tx *sqlx.Tx, productID int) error {
 			return err
 		}
 	}
-	err = s.repo.DeleteProduct(tx, productID)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return s.repo.DeleteProduct(tx, productID)
 }

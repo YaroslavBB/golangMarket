@@ -80,10 +80,10 @@ func (mr *MockRepositoryMockRecorder) AddProduct(tx, product interface{}) *gomoc
 }
 
 // AddProductType mocks base method.
-func (m *MockRepository) AddProductType(tx *sqlx.Tx, product producte.ProductForm, productID int) (int, error) {
+func (m *MockRepository) AddProductType(tx *sqlx.Tx, product producte.ProductForm, productID int) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddProductType", tx, product, productID)
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -163,6 +163,21 @@ func (m *MockRepository) GetAllId(tx *sqlx.Tx, productID int) ([]producte.AllId,
 func (mr *MockRepositoryMockRecorder) GetAllId(tx, productID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllId", reflect.TypeOf((*MockRepository)(nil).GetAllId), tx, productID)
+}
+
+// GetProductIdAndTypeIdByName mocks base method.
+func (m *MockRepository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string) (producte.AllId, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProductIdAndTypeIdByName", tx, name, form)
+	ret0, _ := ret[0].(producte.AllId)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetProductIdAndTypeIdByName indicates an expected call of GetProductIdAndTypeIdByName.
+func (mr *MockRepositoryMockRecorder) GetProductIdAndTypeIdByName(tx, name, form interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProductIdAndTypeIdByName", reflect.TypeOf((*MockRepository)(nil).GetProductIdAndTypeIdByName), tx, name, form)
 }
 
 // GetProductIdByName mocks base method.
