@@ -50,7 +50,7 @@ func TestDeleteProductById(t *testing.T) {
 		mockRepo.EXPECT().GetAllId(gomock.Any(), testID.ProductId).Return(testIDList, nil).Times(1)
 		mockRepo.EXPECT().DeletePriceHistoryProduct(gomock.Any(), int(testID.TypeId.Int64)).Return(global.ErrNoDataFound).Times(1)
 
-		r.Error(service.DeleteProductById(nil, testID.ProductId))
+		r.Equal(global.ErrNoDataFound, service.DeleteProductById(nil, testID.ProductId))
 	})
 
 	t.Run("удаление продукта - ошибка в удалении формы", func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestDeleteProductById(t *testing.T) {
 		mockRepo.EXPECT().DeletePriceHistoryProduct(gomock.Any(), int(testID.TypeId.Int64)).Return(nil).Times(1)
 		mockRepo.EXPECT().DeleteTypeProduct(gomock.Any(), int(testID.TypeId.Int64)).Return(global.ErrNoDataFound).Times(1)
 
-		r.Error(service.DeleteProductById(nil, testID.ProductId))
+		r.Equal(global.ErrNoDataFound, service.DeleteProductById(nil, testID.ProductId))
 	})
 
 	t.Run("удаление продукта - ошибка в удалении истории цен", func(t *testing.T) {
@@ -67,7 +67,7 @@ func TestDeleteProductById(t *testing.T) {
 		mockRepo.EXPECT().DeleteTypeProduct(gomock.Any(), int(testID.TypeId.Int64)).Return(nil).Times(1)
 		mockRepo.EXPECT().DeletePriceHistory(gomock.Any(), testID.PriceHistoryId).Return(global.ErrNoDataFound).Times(1)
 
-		r.Error(service.DeleteProductById(nil, testID.ProductId))
+		r.Equal(global.ErrNoDataFound, service.DeleteProductById(nil, testID.ProductId))
 	})
 
 	t.Run("удаление продукта - ошибка в удалении продукта", func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestDeleteProductById(t *testing.T) {
 		mockRepo.EXPECT().DeletePriceHistory(gomock.Any(), testID.PriceHistoryId).Return(nil).Times(1)
 		mockRepo.EXPECT().DeleteProduct(gomock.Any(), testID.ProductId).Return(global.ErrNoDataFound).Times(1)
 
-		r.Error(service.DeleteProductById(nil, testID.ProductId))
+		r.Equal(global.ErrNoDataFound, service.DeleteProductById(nil, testID.ProductId))
 	})
 }
 
