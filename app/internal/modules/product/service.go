@@ -1,6 +1,7 @@
 package product
 
 import (
+	"task/internal/entity/global"
 	"task/internal/entity/producte"
 
 	"github.com/jmoiron/sqlx"
@@ -27,32 +28,8 @@ func (s *service) LoadProductFormByID(tx *sqlx.Tx, id int) ([]producte.ProductFo
 
 func (s *service) AddNewProduct(tx *sqlx.Tx, product producte.ProductForm) error {
 	productDependencies, err := s.repo.GetProductIdAndTypeIdByName(tx, product.Name, product.Form)
-	if err != nil {
-		return err
-	}
-
 	switch {
-	case productDependencies.ProductId != 0 && productDependencies.TypeId.Valid:
-		err = s.repo.UpdateProductAmount(tx, product, int(productDependencies.TypeId.Int64))
-		if err != nil {
-			return err
-		}
-
-	case productDependencies.ProductId != 0 && !productDependencies.TypeId.Valid:
-		productDependencies.PriceHistoryId, err = s.repo.AddPriceHistory(tx, product)
-		if err != nil {
-			return err
-		}
-		productDependencies.TypeId.Int64, err = s.repo.AddProductType(tx, product, productDependencies.ProductId)
-		if err != nil {
-			return err
-		}
-		err = s.repo.AddPriceHistoryProduct(tx, int(productDependencies.TypeId.Int64), productDependencies.PriceHistoryId)
-		if err != nil {
-			return err
-		}
-
-	case productDependencies.ProductId == 0:
+	case err == global.ErrNoDataFound:
 		productDependencies.ProductId, err = s.repo.AddProduct(tx, product)
 		if err != nil {
 			return err
@@ -69,6 +46,26 @@ func (s *service) AddNewProduct(tx *sqlx.Tx, product producte.ProductForm) error
 		if err != nil {
 			return err
 		}
+	case productDependencies.ProductId != 0 && !productDependencies.TypeId.Valid:
+		productDependencies.PriceHistoryId, err = s.repo.AddPriceHistory(tx, product)
+		if err != nil {
+			return err
+		}
+		productDependencies.TypeId.Int64, err = s.repo.AddProductType(tx, product, productDependencies.ProductId)
+		if err != nil {
+			return err
+		}
+		err = s.repo.AddPriceHistoryProduct(tx, int(productDependencies.TypeId.Int64), productDependencies.PriceHistoryId)
+		if err != nil {
+			return err
+		}
+	case productDependencies.TypeId.Valid:
+		err = s.repo.UpdateProductAmount(tx, product, int(productDependencies.TypeId.Int64))
+		if err != nil {
+			return err
+		}
+	default:
+		return err
 	}
 	return nil
 }

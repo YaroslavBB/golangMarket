@@ -175,7 +175,6 @@ func (r *repository) GetProductIdAndTypeIdByName(tx *sqlx.Tx, name, form string)
 	`, name, form)
 
 	if err != nil {
-		// уточнить
 		if err == sql.ErrNoRows {
 			return producte.ProductDependencies{}, global.ErrNoDataFound
 		}

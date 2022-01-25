@@ -2,6 +2,7 @@ package product_test
 
 import (
 	"task/config"
+	"task/internal/entity/global"
 	"task/internal/entity/producte"
 	"task/internal/modules/product"
 	"testing"
@@ -553,6 +554,14 @@ func TestGetProductIdAndTypeIdByName(t *testing.T) {
 	defer tx.Rollback()
 
 	repo := product.NewRepository()
+
+	t.Run("получение не существующего продукта", func(t *testing.T) {
+		t.Run("получение id продукта и формы по имени", func(t *testing.T) {
+			_, err := repo.GetProductIdAndTypeIdByName(tx, testProduct.Name, testProduct.Form)
+			require.Equal(t, global.ErrNoDataFound, err)
+		})
+	})
+
 	t.Run("добавление продукта", func(t *testing.T) {
 		productID, err := repo.AddProduct(tx, testProduct)
 		require.NoError(t, err)
